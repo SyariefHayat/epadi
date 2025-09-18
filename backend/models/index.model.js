@@ -1,92 +1,35 @@
 const mongoose = require("mongoose");
 
-const FarmerSchema = new mongoose.Schema(
-    {
-        NIK: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-            minlength: 16,
-            maxlength: 16,
-            match: /^[0-9]{16}$/ // validasi angka 16 digit
-        },
-            fullName: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        dateOfBirth: {
-        type: Date,
-        required: true
-        },
-        gender: {
-        type: String,
-        enum: ["Laki-laki", "Perempuan"],
-        required: true
-        },
-        phone: {
-        type: String,
-        trim: true,
-        match: /^[0-9]{10,15}$/ // opsional validasi nomor HP
-        },
-        address: {
-        type: String,
-        required: true,
-        trim: true
-        },
-        village: {
-        type: String,
-        required: true,
-        trim: true
-        },
-        district: {
-        type: String,
-        required: true,
-        trim: true
-        },
-        province: {
-        type: String,
-        required: true,
-        trim: true
-        },
+const FarmerSchema = new mongoose.Schema({
+    // Data Pribadi
+    role: { type: String, enum: ["farmer", "buyer", "distributor", "investor"], required: true },
+    NIK: { type: String, required: true, unique: true, trim: true, minlength: 16, maxlength: 16,    match: /^[0-9]{16}$/ },
+    fullName: { type: String, required: true, trim: true },
+    dateOfBirth: { type: Date, required: true },
+    gender: { type: String, enum: ["Laki-laki", "Perempuan"], required: true },
+    phone: { type: String, trim: true, match: /^[0-9]{10,15}$/ },
 
-        // Data pertanian
-        landArea: {
-        type: Number, // hektar
-        required: true,
-        min: 0
-        },
-        landLocation: {
-        type: String,
-        trim: true
-        },
-        riceVariety: {
-        type: String, // contoh: IR64, Inpari 32, Ciherang
-        required: true
-        },
-        plantingSeason: {
-        type: String, // contoh: MT1, MT2, MT3
-        required: true
-        },
-        harvestEstimate: {
-        type: Number, // ton per hektar
-        min: 0
-        },
+    // Alamat
+    postalCode: { type: String, required: true, trim: true },
+    province: { type: String, required: true, trim: true },
+    city: { type: String, required: true, trim: true },
+    subDistrict: { type: String, required: true, trim: true },
+    ward: { type: String, required: true, trim: true },
+    address: { type: String, required: true, trim: true },
 
-        // Keanggotaan
-        farmerGroup: {
-        type: String, // nama kelompok tani
-        trim: true
-        },
-        farmerCardNumber: {
-        type: String, // nomor kartu tani (jika ada)
-        trim: true,
-        unique: true,
-        sparse: true
-        }
-    },
-    { timestamps: true }
-);
+    // Informasi Pertanian
+    landArea: { type: Number, required: true, min: 0 }, // luas lahan (m2/ha)
+    riceVariety: { type: String, required: true, trim: true },
+    estimatedHarvest: { type: Number, min: 0, required: true }, // produksi estimasi (kg/ton)
+    howLongBecomeFarmer: { type: String, required: true, trim: true }, // lama jadi petani
+    landOwnership: { type: String, required: true, trim: true }, // status kepemilikan lahan
+    landLocation: { type: String, trim: true },
+    plantingSeason: { type: String, required: true, trim: true },
+    
+    farmerGroup: { type: String, trim: true },
+    farmerCardNumber: { type: String, trim: true, unique: true, sparse: true }
+}, { timestamps: true });
 
-module.exports = mongoose.model("Farmer", FarmerSchema);
+module.exports = {
+    Farmer: mongoose.model("Farmer", FarmerSchema),
+}

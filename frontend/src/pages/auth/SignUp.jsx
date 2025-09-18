@@ -101,6 +101,7 @@ const SignUp = () => {
         <DefaultLayout>
             <div className="bg-gray-50 w-full min-h-screen">
                 <Navbar />
+                
                 <main className="min-h-screen flex items-center justify-center px-4 pt-20 pb-8">
                     <div className="w-full max-w-2xl">
                         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">

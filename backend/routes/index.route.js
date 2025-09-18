@@ -1,6 +1,6 @@
 const router = require("express").Router();
 // const upload = require('../middlewares/upload');
-// const userController = require("../controllers/auth.controller");
+const authController = require("../controllers/auth.controller");
 // const donorController = require("../controllers/donor.controller");
 // const adminController = require("../controllers/admin.controller");
 // const articleController = require("../controllers/article.controller");
@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
     res.send("Server is running!");
 })
 
-// router.post("/sign-up", userController.SignUpUser);
+router.post("/sign-up/farmer", authController.SignUpFarmer);
 // router.post("/sign-in", userController.SignInUser);
 // router.post("/sign-out", verifyToken, userController.SignOutUser);
 // router.post("/forgot-password", userController.ForgotPasswordUser);
