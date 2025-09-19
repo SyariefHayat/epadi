@@ -1,32 +1,22 @@
 export const LIST_FEATURES = [
     {
-        image: "/21.jpg",
-        title: "Harga Jagung Terbaik",
-        description: "Dapatkan harga jagung yang adil dan transparan dengan sistem lelang digital dan akses langsung ke pembeli besar"
+        title: "Marketplace Padi",
+        description: "Tempat petani mengunggah stok panen secara langsung.",
+        icon: "/market.png"
     },
     {
-        image: "/10.jpg",
-        title: "Distribusi Terintegrasi",
-        description: "Layanan logistik door-to-door khusus jagung dengan jaminan kualitas dan ketepatan waktu pengiriman"
+        title: "Sistem Pembayaran Aman",
+        description: "Model escrow yang memastikan pembayaran diterima petani setelah transaksi sukses.",
+        icon: "family.png"
     },
     {
-        image: "/19.jpg",
-        title: "Analisis Pasar Jagung",
-        description: "Monitor harga jagung real-time, prediksi tren pasar, dan rekomendasi waktu terbaik untuk menjual"
+        title: "Logistik Terintegrasi",
+        description: "Kemitraan dengan penyedia transportasi untuk mempercepat pengiriman.",
+        icon: "/distributor.png"
     },
     {
-        image: "/18.jpg",
-        title: "Jaminan Pembayaran",
-        description: "Sistem pembayaran aman dengan escrow dan asuransi untuk melindungi setiap transaksi jagung Anda"
-    },
-    {
-        image: "/22.jpg",
-        title: "Komunitas Petani",
-        description: "Bergabung dengan forum diskusi, sharing tips budidaya jagung, dan networking dengan sesama petani"
-    },
-    {
-        image: "/24.jpg",
-        title: "Teknologi Smart Farming",
-        description: "Akses ke tools monitoring cuaca, prediksi panen, dan konsultasi ahli pertanian jagung"
+        title: "Data & Analitik",
+        description: "Pemantauan harga, stok, dan permintaan pasar secara real-time.",
+        icon: "/farmer.png"
     }
 ]

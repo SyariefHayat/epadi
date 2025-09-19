@@ -19,9 +19,11 @@ const HeroSection = () => {
                         lama
                     </p>
                     <div className="flex justify-center lg:justify-start">
-                        <Button className="w-fit bg-green-600 hover:bg-green-700 py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg cursor-pointer shadow-md">
-                            Mulai Sekarang
-                        </Button>
+                        <a href="/signup">
+                            <Button className="w-fit bg-green-600 hover:bg-green-700 py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg cursor-pointer shadow-md">
+                                Mulai Sekarang
+                            </Button>
+                        </a>
                     </div>
                 </div>
 
