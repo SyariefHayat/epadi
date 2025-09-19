@@ -9,13 +9,13 @@ const AboutUs = () => {
         <DefaultLayout>
             <NavBar />
             
-            <section className="bg-gradient-to-br from-green-50 to-emerald-100 py-20">
+            <section className="bg-green-600 py-20">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="text-center">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
                             Tentang Kami
                         </h1>
-                        <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-lg md:text-xl text-white max-w-3xl mx-auto leading-relaxed">
                             Membangun ekosistem digital terdepan untuk padi di Indonesia, 
                             mendukung kedaulatan pangan nasional dan kesejahteraan petani.
                         </p>
@@ -23,42 +23,21 @@ const AboutUs = () => {
                 </div>
             </section>
 
-            <section className="py-20 bg-white">
-                <div className="container mx-auto px-4 max-w-6xl">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="order-2 lg:order-1">
-                            <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 rounded-2xl shadow-xl">
-                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
-                                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </div>
-                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Visi</h2>
-                                <p className="text-green-50 text-lg leading-relaxed">
-                                    Menjadi ekosistem digital terdepan untuk padi di Indonesia, yang mendukung 
-                                    kedaulatan pangan nasional dan meningkatkan kesejahteraan petani.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="order-1 lg:order-2">
-                            <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl flex items-center justify-center">
-                                <div className="text-center p-8">
-                                    <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-gray-800">Transformasi Digital</h3>
-                                    <p className="text-gray-600 mt-2">Mengubah industri padi dengan teknologi</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <section className="w-full h-full lg:min-h-screen px-6 sm:px-10 py-16 lg:p-20 flex flex-col lg:flex-row gap-8 lg:gap-12 bg-white">
+                <div className="w-full lg:w-1/2 h-64 sm:h-80 lg:h-auto bg-[url('2153.jpg')] bg-cover bg-center rounded-xl shadow-md"></div>
+
+                <div className="w-full lg:w-1/2 flex flex-col justify-center gap-5 text-center lg:text-left">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                    Visi Kami
+                    </h2>
+                    <p className="text-base sm:text-lg leading-relaxed text-gray-600">
+                    Menjadi ekosistem digital terdepan untuk padi di Indonesia, yang mendukung
+                    kedaulatan pangan nasional dan meningkatkan kesejahteraan petani.
+                    </p>
                 </div>
             </section>
 
-            <section className="py-20 bg-gray-50">
+            <section className="py-20 px-6 lg:px-0 bg-gray-50">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Misi Kami</h2>
@@ -119,7 +98,7 @@ const AboutUs = () => {
                 </div>
             </section>
 
-            <section className="py-20 bg-white">
+            <section className="py-20 px-6 lg:px-0 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Nilai-Nilai Kami</h2>
