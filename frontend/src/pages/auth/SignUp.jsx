@@ -3,70 +3,13 @@ import React, { useState, useCallback } from 'react'
 
 import Navbar from '@/components/modules/auth/Navbar'
 import DefaultLayout from '@/components/layouts/DefaultLayout'
+import EachUtils from '@/utils/EachUtils'
+import { LIST_ROLE } from '@/constants/listRole'
 
 const SignUp = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState('');
-
-    const roles = [
-        {
-            id: 'petani',
-            title: 'Petani',
-            description: 'Saya ingin menjual hasil panen dan bergabung dengan komunitas petani',
-            icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-            ),
-            route: '/signup/farmer',
-            color: 'bg-green-500',
-            borderColor: 'border-green-200',
-            focusColor: 'ring-green-500'
-        },
-        {
-            id: 'distributor',
-            title: 'Distributor',
-            description: 'Saya ingin mendistribusikan produk pertanian ke berbagai wilayah',
-            icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            ),
-            route: '/signup/distributor',
-            color: 'bg-blue-500',
-            borderColor: 'border-blue-200',
-            focusColor: 'ring-blue-500'
-        },
-        {
-            id: 'investor',
-            title: 'Investor',
-            description: 'Saya ingin berinvestasi dalam sektor pertanian dan agribisnis',
-            icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            ),
-            route: '/signup/investor',
-            color: 'bg-purple-500',
-            borderColor: 'border-purple-200',
-            focusColor: 'ring-purple-500'
-        },
-        {
-            id: 'pembeli',
-            title: 'Pembeli',
-            description: 'Saya ingin membeli produk pertanian langsung dari petani',
-            icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-            ),
-            route: '/signup/buyer',
-            color: 'bg-orange-500',
-            borderColor: 'border-orange-200',
-            focusColor: 'ring-orange-500'
-        }
-    ];
 
     const handleRoleSelect = useCallback((roleId) => {
         setSelectedRole(roleId);
@@ -76,9 +19,10 @@ const SignUp = () => {
         if (!selectedRole || isLoading) return;
         
         setIsLoading(true);
+        console.log(selectedRole)
         
         try {
-            const selectedRoleData = roles.find(role => role.id === selectedRole);
+            const selectedRoleData = LIST_ROLE.find(role => role.id === selectedRole);
             
             if (selectedRoleData) {
                 await new Promise(resolve => setTimeout(resolve, 1500));
@@ -121,48 +65,51 @@ const SignUp = () => {
 
                             <div className="space-y-4 mb-8" role="radiogroup" aria-labelledby="role-selection">
                                 <h2 id="role-selection" className="sr-only">Pilih peran Anda</h2>
-                                {roles.map((role) => (
-                                    <div
-                                        key={role.id}
-                                        onClick={() => handleRoleSelect(role.id)}
-                                        className={`
-                                            relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg
-                                            ${selectedRole === role.id 
-                                                ? `${role.borderColor} ${role.focusColor} ring-2 bg-gray-50` 
-                                                : 'border-gray-200 hover:border-gray-300'
-                                            }
-                                        `}
-                                    >
-                                        <div className="flex items-start space-x-4">
-                                            <div className={`${role.color} text-white p-3 rounded-lg flex-shrink-0`}>
-                                                {role.icon}
-                                            </div>
-                                            <div className="flex-1">
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                                    {role.title}
-                                                </h3>
-                                                <p className="text-gray-600 text-sm leading-relaxed">
-                                                    {role.description}
-                                                </p>
-                                            </div>
-                                            <div className="flex-shrink-0">
-                                                <div className={`
-                                                    w-6 h-6 rounded-full border-2 transition-all duration-200
-                                                    ${selectedRole === role.id 
-                                                        ? `bg-green-500 border-green-500` 
-                                                        : 'border-gray-300'
-                                                    }
-                                                `}>
-                                                    {selectedRole === role.id && (
-                                                        <svg className="w-4 h-4 text-white m-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                        </svg>
-                                                    )}
+                                <EachUtils 
+                                    of={LIST_ROLE}
+                                    render={(item, index) => (
+                                        <div
+                                            key={index}
+                                            onClick={() => handleRoleSelect(item.id)}
+                                            className={`
+                                                relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg
+                                                ${selectedRole === item.id 
+                                                    ? `${item.borderColor} ${item.focusColor} ring-2 bg-gray-50` 
+                                                    : 'border-gray-200 hover:border-gray-300'
+                                                }
+                                            `}
+                                        >
+                                            <div className="flex items-start space-x-4">
+                                                <div className={`${item.color} text-white p-3 rounded-lg flex-shrink-0`}>
+                                                    <item.icon/>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                                        {item.title}
+                                                    </h3>
+                                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                                        {item.description}
+                                                    </p>
+                                                </div>
+                                                <div className="flex-shrink-0">
+                                                    <div className={`
+                                                        w-6 h-6 rounded-full border-2 transition-all duration-200
+                                                        ${selectedRole === item.id 
+                                                            ? `bg-green-500 border-green-500` 
+                                                            : 'border-gray-300'
+                                                        }
+                                                    `}>
+                                                        {selectedRole === item.id && (
+                                                            <svg className="w-4 h-4 text-white m-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )}
+                                />
                             </div>
 
                             <button
