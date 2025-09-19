@@ -19,7 +19,7 @@ const HeroSection = () => {
                         lama
                     </p>
                     <div className="flex justify-center lg:justify-start">
-                        <Button className="w-fit bg-green-500 hover:bg-green-600 py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg cursor-pointer shadow-md">
+                        <Button className="w-fit bg-green-600 hover:bg-green-700 py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg cursor-pointer shadow-md">
                             Mulai Sekarang
                         </Button>
                     </div>
@@ -29,7 +29,7 @@ const HeroSection = () => {
                     <img
                         src="/mockup.png"
                         alt="Mockup aplikasi EPADI"
-                        className="w-full md:ml-10 lg:max-w-2xl lg:mb-16 lg:ml-12 xl:ml-48"
+                        className="w-full ml-6 md:ml-12 lg:max-w-2xl lg:mb-16 lg:ml-12 xl:ml-48"
                     />
             </div>                                                                              
             </div>
