@@ -1,8 +1,8 @@
 import React from 'react';
 
 import EachUtils from '@/utils/EachUtils';
-import { LIST_FEATURES } from '@/constants/listFeatures';
 import { Button } from '@/components/ui/button';
+import { LIST_FEATURES } from '@/constants/listFeatures';
 
 const FeaturesSection = () => {
     return (
