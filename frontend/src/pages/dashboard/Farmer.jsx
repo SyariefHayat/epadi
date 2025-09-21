@@ -7,6 +7,7 @@ import {
 
 import AppSidebar from '@/components/modules/farmerDashboard/AppSidebar'
 import SiteHeader from '@/components/modules/farmerDashboard/SiteHeader'
+import Biodata from '@/components/modules/farmerDashboard/Biodata'
 
 const Farmer = () => {
     return (
@@ -22,7 +23,9 @@ const Farmer = () => {
             <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">
-                    <div className="@container/main flex flex-1 flex-col gap-2 bg-green-50"></div>
+                    <div className="@container/main flex flex-1 flex-col gap-2">
+                        <Biodata />
+                    </div>
                 </div>
             </SidebarInset>
         </SidebarProvider>

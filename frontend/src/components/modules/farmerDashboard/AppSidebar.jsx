@@ -18,7 +18,8 @@ import {
     ExternalLink,
     Activity,
     Calendar,
-    Smartphone
+    Smartphone,
+    User
 } from "lucide-react";
 
 import {
@@ -45,6 +46,11 @@ const data = {
             title: "Dashboard", 
             url: "#", 
             icon: Home 
+        },
+        {
+            title: "Biodata",
+            url: "#",
+            icon: User
         },
         { 
             title: "Rantai Pasok", 
@@ -191,15 +197,15 @@ const data = {
 
 const AppSidebar = () => {
     return (
-        <Sidebar collapsible="offcanvas">
-            <SidebarHeader>
+        <Sidebar collapsible="offcanvas" className="border-none outline-none">
+            <SidebarHeader className="bg-green-500">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:!p-5"
                         >
-                            <a href="#">
+                            <a href="#" className="text-white">
                                 <IconInnerShadowTop className="!size-5" />
                                 <span className="text-base uppercase font-semibold">Dashboard Petani</span>
                             </a>
@@ -207,10 +213,10 @@ const AppSidebar = () => {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="bg-green-500 text-white">
                 <NavMain items={data.navMain} />
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="bg-green-500 text-white">
                 <NavUser user={data.user} />
             </SidebarFooter>
         </Sidebar>
