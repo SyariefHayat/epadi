@@ -31,6 +31,7 @@ import Distributor from "@/pages/dashboard/Distributor"
 import Investor from "@/pages/dashboard/Investor"
 import AboutUs from "@/pages/aboutUs"
 import AdminLogin from "@/pages/auth/AdminLogin"
+import Admin from "@/pages/dashboard/Admin"
 
 const routes = [
     { path: "/", element: <Home /> },
@@ -51,7 +52,7 @@ const routes = [
     { path: "/signup/verify-otp", element: <VerifyOtp /> },
     { path: "/signup/profile-setup", element: <ProfileSetup /> },
     { path: "/signup/success", element: <Success /> },
-    { path: "/dashboard/admin", element: <Farmer /> },
+    { path: "/dashboard/admin", element: <Admin /> },
     { path: "/dashboard/farmer", element: <Farmer /> },
     { path: "/dashboard/distributor", element: <Distributor /> },
     { path: "/dashboard/investor", element: <Investor /> },
