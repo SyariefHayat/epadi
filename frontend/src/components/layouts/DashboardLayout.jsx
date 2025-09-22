@@ -6,8 +6,8 @@ import {
 } from '@/components/ui/sidebar'
 
 import { Toaster } from '@/components/ui/sonner';
-import AppSidebar from '../modules/dashboard/AppSidebar';
-import SiteHeader from '../modules/dashboard/SiteHeader';
+import AppSidebar from '../modules/Dashboard/AppSidebar';
+import SiteHeader from '../modules/Dashboard/SiteHeader';
 
 const DashboardLayout = ({ children }) => {
     return (
