@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { toast } from "sonner"
+import { useAtom } from "jotai"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
@@ -17,6 +18,7 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { userDataAtomStorage } from "@/jotai/atoms"
 import { apiInstanceExpress } from "@/service/apiInstance"
 
 const userSigninSchema = z.object({
@@ -33,6 +35,8 @@ const userSigninSchema = z.object({
 const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    
+    const [, setUserDataAtom] = useAtom(userDataAtomStorage)
     
     const navigate = useNavigate()
 
@@ -51,6 +55,8 @@ const LoginForm = () => {
             const response = await apiInstanceExpress.post("/sign-in", data);
             if (response.status === 200) {
                 toast.success("Login berhasil!");
+
+                setUserDataAtom(response.data.data);
 
                 setTimeout(() => {
                     navigate(`/dashboard/${response.data.data.role}`);

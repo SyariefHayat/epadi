@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { toast } from 'sonner'
+import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,6 +26,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { userDataAtomStorage } from '@/jotai/atoms'
+import { apiInstanceExpress } from '@/service/apiInstance'
 
 const FarmerBiodata = z.object({
     dateOfBirth: z.coerce.date({ 
@@ -56,7 +60,8 @@ const FarmerBiodata = z.object({
 });
 
 const Biodata = () => {
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [userData] = useAtom(userDataAtomStorage);
     
     const form = useForm({
         resolver: zodResolver(FarmerBiodata),
@@ -80,22 +85,26 @@ const Biodata = () => {
             farmerGroup: "",
             farmerCardNumber: "",
         }
-    })
+    });
 
     const handleSubmit = async (data) => {
         setIsLoading(true)
 
         try {
-            console.log("Data petani:", data)
-            
-            alert("Pendaftaran berhasil!")
+            const payload = {
+                ...data,
+                user: userData._id
+            };
+
+            const response = await apiInstanceExpress.post('/farmer/biodata', payload);
+            if (response.status === 201) alert("Biodata berhasil disimpan");
         } catch (error) {
-            console.error("Error:", error)
-            alert("Terjadi kesalahan saat mendaftar")
+            console.error("Error:", error.response.data.message);
+            toast.error(`${error.response.data.message}`);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
