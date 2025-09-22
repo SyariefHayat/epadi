@@ -12,7 +12,9 @@ import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 const Farmer = () => {
     return (
-        <DashboardLayout></DashboardLayout>
+        <DashboardLayout>
+            <Biodata />
+        </DashboardLayout>
         // <SidebarProvider
         //     style={
         //         {
