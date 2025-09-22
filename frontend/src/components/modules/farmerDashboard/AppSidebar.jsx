@@ -53,25 +53,25 @@ const data = {
 const AppSidebar = () => {
     return (
         <Sidebar collapsible="offcanvas" className="border-none outline-none">
-            <SidebarHeader className="bg-green-500">
+            <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:!p-5"
                         >
-                            <a href="#" className="text-white">
+                            <a href="#">
                                 <IconInnerShadowTop className="!size-5" />
-                                <span className="text-base uppercase font-semibold">Dashboard Admin</span>
+                                <span className="text-base uppercase font-semibold">Dashboard Petani</span>
                             </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent className="bg-green-500 text-white">
+            <SidebarContent>
                 <NavMain items={data.navMain} />
             </SidebarContent>
-            <SidebarFooter className="bg-green-500 text-white">
+            <SidebarFooter>
                 <NavUser user={data.user} />
             </SidebarFooter>
         </Sidebar>

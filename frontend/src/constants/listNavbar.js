@@ -1,3 +1,14 @@
+import { 
+    ClipboardList, 
+    HandCoins, 
+    Home, 
+    Leaf, 
+    MessageSquareText, 
+    Settings, 
+    User, 
+    Wallet 
+} from "lucide-react"
+
 export const LIST_NAVBAR = [
     {
         title: "Beranda",
@@ -31,6 +42,64 @@ export const LIST_NAVBAR = [
     {
         title: "Berita",
         url: "/news"
+    },
+]
+
+export const LIST_NAVBAR_DB = [
+    {
+        title: "Main",
+        items: [
+            {
+                title: "Dashboard",
+                url: "#",
+                icon: Home,
+            },
+        ],
+    },
+    {
+        title: "Manajemen",
+        items: [
+            {
+                title: "Biodata",
+                url: "#",
+                icon: User,
+            },
+            {
+                title: "Rantai Pasok",
+                url: "#",
+                icon: HandCoins,
+            },
+            {
+                title: "Ekonomi",
+                url: "#",
+                icon: Wallet,
+            },
+            {
+                title: "Sosial",
+                url: "#",
+                icon: ClipboardList,
+            },
+            {
+                title: "Prediksi",
+                url: "#",
+                icon: MessageSquareText,
+            },
+            {
+                title: "Lingkungan",
+                url: "#",
+                icon: Leaf,
+            },
+        ],
+    },
+    {
+        title: "Lainnya",
+        items: [
+            {
+                title: "Pengaturan",
+                url: "#",
+                icon: Settings,
+            },
+        ],
     },
 ]
 
