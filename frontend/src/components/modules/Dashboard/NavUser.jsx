@@ -44,11 +44,10 @@ const NavUser = () => {
 			const response = await apiInstanceExpress.post("/sign-out", payload);
 			if (response.status === 200) {
 				toast.success("Sign out berhasil");
-				setUserData(null);
-				localStorage.removeItem("userData");
-
+				
 				setTimeout(() => {
-					window.location.href = "/";
+					setUserData(null);
+					localStorage.removeItem("userData");
 				}, 2000);
 			}
 		} catch (error) {

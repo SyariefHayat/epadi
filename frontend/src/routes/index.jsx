@@ -33,6 +33,7 @@ import AboutUs from "@/pages/aboutUs"
 import AdminLogin from "@/pages/auth/AdminLogin"
 import Admin from "@/pages/dashboard/Admin"
 import { ErrorBoundary } from "@/pages/error"
+import ProtectedRoute from "@/components/modules/auth/ProtectedRoute"
 
 const routes = [
     { 
@@ -61,7 +62,7 @@ const routes = [
         errorElement: <ErrorBoundary />,
     },
     { 
-        path: "/marketplace", 
+        path: "/marketplace",
         element: <Mart />,
         errorElement: <ErrorBoundary />,
     },
@@ -132,7 +133,10 @@ const routes = [
     },
     { 
         path: "/dashboard/farmer", 
-        element: <Farmer />,
+        element:
+            <ProtectedRoute>
+                <Farmer />
+            </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },
     { 
