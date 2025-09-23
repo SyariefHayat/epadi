@@ -32,44 +32,189 @@ import Investor from "@/pages/dashboard/Investor"
 import AboutUs from "@/pages/aboutUs"
 import AdminLogin from "@/pages/auth/AdminLogin"
 import Admin from "@/pages/dashboard/Admin"
+import { ErrorBoundary } from "@/pages/error"
 
 const routes = [
-    { path: "/", element: <Home /> },
-    { path: "/about-us", element: <AboutUs /> },
-    { path: "/price-market", element: <PriceMarket /> },
-    { path: "/community", element: <Community /> },
-    { path: "/cooperation", element: <Cooperation /> },
-    { path: "/marketplace", element: <Mart /> },
-    { path: "/news", element: <News /> },
-    { path: "/login", element: <Login /> },
-    { path: "/juki-admin", element: <AdminLogin /> },
-    { path: "/signup", element: <SignUp /> },
-    { path: "/signup/farmer", element: <FarmerSignup /> },
-    { path: "/signup/distributor", element: <DistributorSignup /> },
-    { path: "/signup/investor", element: <InvestorSignup /> },
-    { path: "/signup/buyer", element: <BuyerSignup /> },
-    { path: "/signup/otp", element: <Otp /> },
-    { path: "/signup/verify-otp", element: <VerifyOtp /> },
-    { path: "/signup/profile-setup", element: <ProfileSetup /> },
-    { path: "/signup/success", element: <Success /> },
-    { path: "/dashboard/admin", element: <Admin /> },
-    { path: "/dashboard/farmer", element: <Farmer /> },
-    { path: "/dashboard/distributor", element: <Distributor /> },
-    { path: "/dashboard/investor", element: <Investor /> },
-    { path: "/mart", element: <Mart /> }, 
-    { path: "/mart/category", element: <Category /> },
-    { path: "/mart/popular", element: <PopularProducts /> },
-    { path: "/mart/category/:category", element: <Category /> },
-    { path: "/mart/store", element: <StoreRecommendations /> },
-    { path: "/mart/store/:toko", element: <StoreDetail /> },
-    { path: "/mart/store/:toko/:produk", element: <Product /> },
-    { path: "/mart/for-you", element: <ForYouRecom /> },
-    { path: "/message", element: <Message /> },
-    { path: "/notification", element: <Notification /> },
-    { path: "/cart", element: <Cart /> },
-    { path: "/profile", element: <Profile /> },
-    { path: "/create/store", element: <CreateStore /> },
-    { path: "/seller", element: <Seller /> },
+    { 
+        path: "/", 
+        element: <Home />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/about-us", 
+        element: <AboutUs />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/price-market", 
+        element: <PriceMarket />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/community", 
+        element: <Community />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/cooperation", 
+        element: <Cooperation />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/marketplace", 
+        element: <Mart />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/news", 
+        element: <News />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/login", 
+        element: <Login />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/juki-admin", 
+        element: <AdminLogin />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup", 
+        element: <SignUp />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/farmer", 
+        element: <FarmerSignup />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/distributor", 
+        element: <DistributorSignup />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/investor", 
+        element: <InvestorSignup />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/buyer", 
+        element: <BuyerSignup />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/otp", 
+        element: <Otp />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/verify-otp", 
+        element: <VerifyOtp />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/profile-setup", 
+        element: <ProfileSetup />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/signup/success", 
+        element: <Success />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/dashboard/admin", 
+        element: <Admin />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/dashboard/farmer", 
+        element: <Farmer />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/dashboard/distributor", 
+        element: <Distributor />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/dashboard/investor", 
+        element: <Investor />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart", 
+        element: <Mart />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/category", 
+        element: <Category />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/popular", 
+        element: <PopularProducts />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/category/:category", 
+        element: <Category />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/store", 
+        element: <StoreRecommendations />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/store/:toko", 
+        element: <StoreDetail />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/store/:toko/:produk", 
+        element: <Product />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/mart/for-you", 
+        element: <ForYouRecom />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/message", 
+        element: <Message />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/notification", 
+        element: <Notification />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/cart", 
+        element: <Cart />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/profile", 
+        element: <Profile />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/create/store", 
+        element: <CreateStore />,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/seller", 
+        element: <Seller />,
+        errorElement: <ErrorBoundary />,
+    },
 ]
 
 export default routes
