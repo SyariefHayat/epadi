@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useState, useCallback } from 'react'
 
-import Navbar from '@/components/modules/auth/Navbar'
-import DefaultLayout from '@/components/layouts/DefaultLayout'
 import EachUtils from '@/utils/EachUtils'
 import { LIST_ROLE } from '@/constants/listRole'
+import Navbar from '@/components/modules/auth/Navbar'
+import DefaultLayout from '@/components/layouts/DefaultLayout'
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -24,21 +24,15 @@ const SignUp = () => {
             const selectedRoleData = LIST_ROLE.find(role => role.id === selectedRole);
             
             if (selectedRoleData) {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                navigate(selectedRoleData.route);
+                setTimeout(() => {
+                    navigate(selectedRoleData.route);
+                }, 1500);
             }
         } catch (error) {
             console.error('Navigation error:', error);
             setIsLoading(false);
         }
     }, [selectedRole, isLoading, navigate]);
-
-    const handleKeyDown = useCallback((event, roleId) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleRoleSelect(roleId);
-        }
-    }, [handleRoleSelect]);
 
     return (
         <DefaultLayout>

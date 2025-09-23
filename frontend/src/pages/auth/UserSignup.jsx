@@ -2,7 +2,7 @@ import z from 'zod';
 import { toast } from 'sonner';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { User, Tractor } from 'lucide-react';
+import { User, Tractor, EyeOff, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -79,6 +79,11 @@ const UserRegistrationForm = () => {
         }
     };
 
+    
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
+
     return (
         <DefaultLayout>
             <Navbar />
@@ -107,20 +112,6 @@ const UserRegistrationForm = () => {
 
                                     <FormField
                                         control={form.control}
-                                        name="fullName"
-                                        render={({ field }) => (
-                                            <FormItem className="w-full">
-                                                <FormLabel>Nama Lengkap</FormLabel>
-                                                <FormControl>
-                                                    <Input type="text" placeholder="John Doe" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
                                         name="NIK"
                                         render={({ field }) => (
                                             <FormItem>
@@ -135,14 +126,43 @@ const UserRegistrationForm = () => {
 
                                     <FormField
                                         control={form.control}
+                                        name="fullName"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Nama Lengkap</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" placeholder="John Doe" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
                                         name="password"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Password</FormLabel>
                                                 <FormControl>
-                                                    <Input 
-                                                        type={showPassword ? "text" : "password"} {...field} 
-                                                    />
+                                                    <div className="relative">
+                                                        <Input 
+                                                            type={showPassword ? "text" : "password"} {...field} 
+                                                        />
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={togglePasswordVisibility}
+                                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                                            tabIndex={-1}
+                                                        >
+                                                            {showPassword ? (
+                                                                <EyeOff className="w-5 h-5" />
+                                                            ) : (
+                                                                <Eye className="w-5 h-5" />
+                                                            )}
+                                                        </button>
+                                                    </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -156,9 +176,25 @@ const UserRegistrationForm = () => {
                                             <FormItem>
                                                 <FormLabel>Konfirmasi Password</FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        type={showPassword ? "text" : "password"} {...field} 
-                                                    />
+                                                    <div className="relative">
+                                                        <Input
+                                                            type={showPassword ? "text" : "password"} {...field} 
+                                                        />
+
+                                                        
+                                                        <button
+                                                            type="button"
+                                                            onClick={togglePasswordVisibility}
+                                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                                            tabIndex={-1}
+                                                        >
+                                                            {showPassword ? (
+                                                                <EyeOff className="w-5 h-5" />
+                                                            ) : (
+                                                                <Eye className="w-5 h-5" />
+                                                            )}
+                                                        </button>
+                                                    </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

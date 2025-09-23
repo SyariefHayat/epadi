@@ -135,6 +135,7 @@ const LoginForm = () => {
                                             placeholder="Masukkan password"
                                             className="w-full px-3 py-2 pr-10 border border-gray-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
                                         />
+                                        
                                         <button
                                             type="button"
                                             onClick={togglePasswordVisibility}
