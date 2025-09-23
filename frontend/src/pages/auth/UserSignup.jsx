@@ -73,6 +73,7 @@ const UserRegistrationForm = () => {
             }
         } catch (error) {
             console.error(error);
+            toast.error(`${error.response.data.message || 'Gagal mendaftar. Silahkan coba lagi.'}`);
         } finally {
             setIsLoading(false);
         }

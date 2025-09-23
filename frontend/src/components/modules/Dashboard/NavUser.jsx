@@ -1,4 +1,6 @@
 import React from "react"
+import { toast } from "sonner";
+import { useAtom } from "jotai";
 
 import {
 	ChevronsUpDown,
@@ -27,9 +29,33 @@ import {
 } from "@/components/ui/sidebar";
 
 import { getInitial } from "@/utils/getInitial";
+import { userDataAtomStorage } from "@/jotai/atoms";
+import { apiInstanceExpress } from "@/service/apiInstance";
 
 const NavUser = () => {
 	const { isMobile } = useSidebar();
+	const [userData, setUserData] = useAtom(userDataAtomStorage);
+
+	const handleLogout = async () => {
+		if (!userData) return;
+
+		try {
+			const payload = { NIK: userData.NIK };
+			const response = await apiInstanceExpress.post("/sign-out", payload);
+			if (response.status === 200) {
+				toast.success("Sign out berhasil");
+				setUserData(null);
+				localStorage.removeItem("userData");
+
+				setTimeout(() => {
+					window.location.href = "/";
+				}, 2000);
+			}
+		} catch (error) {
+			toast.error("Sign out gagal");
+			console.error(error);
+		}
+	}
 
 	return (
 		<SidebarMenu>
@@ -74,7 +100,7 @@ const NavUser = () => {
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem className="cursor-pointer">
+						<DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
 							<LogOut />
 							Keluar
 						</DropdownMenuItem>
