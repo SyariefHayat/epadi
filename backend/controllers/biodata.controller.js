@@ -2,6 +2,9 @@ const { SUC, ERR } = require("../utils/response");
 const { Farmer, User } = require("../models/index.model");
 
 const FarmerBiodata = async (req, res) => {
+    const profileImgFile = req.file;
+    const profileImage = profileImgFile ? `${profileImgFile.filename}` : null;
+
     const {
         user,
         dateOfBirth,
@@ -29,7 +32,6 @@ const FarmerBiodata = async (req, res) => {
             user,
             dateOfBirth,
             gender,
-            phone,
             postalCode,
             province,
             city,
@@ -51,9 +53,6 @@ const FarmerBiodata = async (req, res) => {
             .map(([key]) => key);
 
         if (emptyFields.length > 0) return ERR(res, 400, `Field berikut wajib diisi: ${emptyFields.join(", ")}`);
-
-        const phoneRegex = /^[0-9]{10,15}$/;
-        if (!phoneRegex.test(phone)) return ERR(res, 400, "Format nomor HP tidak valid. Harus 10-15 digit angka");
 
         if (!["Laki-laki", "Perempuan"].includes(gender)) return ERR(res, 400, "Jenis kelamin harus 'Laki-laki' atau 'Perempuan'");
 
@@ -92,6 +91,7 @@ const FarmerBiodata = async (req, res) => {
 
         const farmerData = {
             user,
+            profilePicture: profileImage,
             dateOfBirth: birthDate,
             gender: gender.trim(),
             phone: phone.trim(),

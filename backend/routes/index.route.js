@@ -1,5 +1,6 @@
 const router = require("express").Router();
 // const upload = require('../middlewares/upload');
+const upload = require("../middlewares/upload");
 const authController = require("../controllers/auth.controller");
 const biodataController = require("../controllers/biodata.controller");
 // const donorController = require("../controllers/donor.controller");
@@ -26,6 +27,6 @@ router.post("/sign-up", authController.SignUpUser);
 router.post("/sign-in", authController.SignInUser);
 router.post("/sign-out", authController.SignOutUser);
 
-router.post("/farmer/biodata", biodataController.FarmerBiodata);
+router.post("/farmer/biodata", upload.single("profilePhoto"), biodataController.FarmerBiodata);
 
 module.exports = router;

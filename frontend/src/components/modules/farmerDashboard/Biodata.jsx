@@ -2,6 +2,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
+import { ChevronDownIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { User, MapPin, Sprout, Loader2, Image as ImageIcon } from "lucide-react";
@@ -29,14 +30,13 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
+import EachUtils from "@/utils/EachUtils";
 import { Input } from "@/components/ui/input";
-import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { userDataAtomStorage } from "@/jotai/atoms";
 import { apiInstanceExpress } from "@/service/apiInstance";
-import EachUtils from "@/utils/EachUtils";
 
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -45,8 +45,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const FarmerBiodata = z.object({
     nik: z.string().regex(/^\d{16}$/, "NIK harus 16 digit angka"),
     fullName: z.string().min(1, "Nama lengkap wajib diisi"),
-    profilePhoto: z
-        .any()
+    profilePhoto: z.any()
         .optional()
         .refine((file) => !file || file instanceof File, "File foto tidak valid")
         .refine((file) => !file || file.size <= MAX_FILE_SIZE, "Ukuran foto maksimal 2MB")
@@ -57,8 +56,10 @@ const FarmerBiodata = z.object({
 
     dateOfBirth: z.coerce.date({ invalid_type_error: "Tanggal lahir tidak valid" }),
     gender: z.enum(["Laki-laki", "Perempuan"], { required_error: "Jenis kelamin wajib dipilih" }),
-    phone: z.string().regex(/^[0-9]{10,15}$/, "Nomor HP harus 10-15 digit angka"),
-
+    phone: z.string()
+        .regex(/^[0-9]{10,15}$/, "Nomor HP harus 10-15 digit angka")
+        .optional()
+        .or(z.literal("")),
     postalCode: z.string().min(1, "Kode pos wajib diisi"),
     province: z.string().min(1, "Provinsi wajib diisi"),
     city: z.string().min(1, "Kota/Kabupaten wajib diisi"),
@@ -330,7 +331,7 @@ const Biodata = () => {
                                         render={({ field }) => (
                                         <FormItem className="md:col-span-2">
                                             <FormLabel className="text-sm font-medium text-gray-700">
-                                            Foto Profil {isReadOnly && "(tersimpan)"}
+                                            Foto Profil {isReadOnly ? "(tersimpan)" : "(opsional)"} 
                                             </FormLabel>
 
                                             <div className="flex items-center gap-4">
@@ -535,7 +536,7 @@ const Biodata = () => {
                                         render={({ field }) => (
                                         <FormItem className="md:col-span-2">
                                             <FormLabel className="text-sm font-medium text-gray-700">
-                                            Nomor HP
+                                            Nomor HP (Opsional)
                                             </FormLabel>
                                             <FormControl>
                                             <Input
@@ -761,241 +762,280 @@ const Biodata = () => {
                         </div>
 
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-8 py-6 border-b border-gray-100">
-                            <div className="flex items-center gap-3">
-                            <div className="p-2 bg-amber-100 rounded-lg">
-                                <Sprout className="h-5 w-5 text-amber-600" />
+                            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-8 py-6 border-b border-gray-100">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-amber-100 rounded-lg">
+                                        <Sprout className="h-5 w-5 text-amber-600" />
+                                    </div>
+                                    <h2 className="text-xl font-semibold text-gray-900">Data Pertanian</h2>
+                                </div>
                             </div>
-                            <h2 className="text-xl font-semibold text-gray-900">Data Pertanian</h2>
+
+                            <div className="p-8 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="landArea"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                Luas Lahan (Ha)
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        step="0.01"
+                                                        min="0"
+                                                        placeholder="Contoh: 2.5"
+                                                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                        {...field}
+                                                        value={field.value ?? ""}
+                                                        onChange={(e) => field.onChange(e.target.value)}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="riceVariety"
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-sm font-medium text-gray-700">
+                                            Varietas Padi
+                                            </FormLabel>
+                                            <FormControl>
+                                            <Input
+                                                placeholder="Contoh: IR64, Ciherang"
+                                                className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                {...field}
+                                                disabled={disabledAll}
+                                            />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="estimatedHarvest"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                Estimasi Panen (Ton)
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        step="0.1"
+                                                        min="0"
+                                                        placeholder="Contoh: 5.5"
+                                                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                        {...field}
+                                                        value={field.value ?? ""}
+                                                        onChange={(e) => field.onChange(e.target.value)}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="howLongBecomeFarmer"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                    Lama Menjadi Petani
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className="flex items-center gap-2">
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            placeholder="0"
+                                                            className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                            value={field.value ?? ""}
+                                                            onChange={(e) => field.onChange(e.target.value)}
+                                                            disabled={disabledAll}
+                                                        />
+                                                        <span className="text-gray-700 text-sm">tahun</span>
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="landOwnership"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                    Status Kepemilikan Lahan
+                                                </FormLabel>
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
+                                                    disabled={disabledAll}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors">
+                                                            <SelectValue placeholder="Pilih status kepemilikan" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="Milik sendiri" className="cursor-pointer">
+                                                            Milik sendiri
+                                                        </SelectItem>
+                                                        <SelectItem value="Sewa" className="cursor-pointer">
+                                                            Sewa
+                                                        </SelectItem>
+                                                        <SelectItem value="Bagi hasil" className="cursor-pointer">
+                                                            Bagi hasil
+                                                        </SelectItem>
+                                                        <SelectItem value="Pinjam" className="cursor-pointer">
+                                                            Pinjam
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="landLocation"
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-sm font-medium text-gray-700">
+                                            Lokasi Lahan
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Masukkan lokasi lahan"
+                                                    className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                    {...field}
+                                                    disabled={disabledAll}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="plantingSeason"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                    Musim Tanam
+                                                </FormLabel>
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
+                                                    disabled={disabledAll}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors">
+                                                            <SelectValue placeholder="Pilih musim tanam" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="Musim hujan" className="cursor-pointer">
+                                                            Musim hujan
+                                                        </SelectItem>
+                                                        <SelectItem value="Musim kemarau" className="cursor-pointer">
+                                                            Musim kemarau
+                                                        </SelectItem>
+                                                        <SelectItem value="Sepanjang tahun" className="cursor-pointer">
+                                                            Sepanjang tahun
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="farmerGroup"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                Kelompok Tani
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Masukkan nama kelompok tani"
+                                                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                        {...field}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="farmerCardNumber"
+                                        render={({ field }) => (
+                                            <FormItem className="md:col-span-2">
+                                                <FormLabel className="text-sm font-medium text-gray-700">
+                                                Nomor Kartu Tani (Opsional)
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Masukkan nomor kartu tani"
+                                                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                        {...field}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="p-8 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="landArea"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Luas Lahan (Ha)
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        placeholder="Contoh: 2.5"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="riceVariety"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Varietas Padi
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Contoh: IR64, Ciherang"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="estimatedHarvest"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Estimasi Panen (Ton)
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        type="number"
-                                        step="0.1"
-                                        min="0"
-                                        placeholder="Contoh: 5.5"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="howLongBecomeFarmer"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Lama Menjadi Petani
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Contoh: 10 tahun"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="landOwnership"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Status Kepemilikan Lahan
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Contoh: Milik sendiri, Sewa"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="landLocation"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Lokasi Lahan
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Masukkan lokasi lahan"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="plantingSeason"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Musim Tanam
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Contoh: Musim hujan, Musim kemarau"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="farmerGroup"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Kelompok Tani
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Masukkan nama kelompok tani"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="farmerCardNumber"
-                                render={({ field }) => (
-                                <FormItem className="md:col-span-2">
-                                    <FormLabel className="text-sm font-medium text-gray-700">
-                                    Nomor Kartu Tani (Opsional)
-                                    </FormLabel>
-                                    <FormControl>
-                                    <Input
-                                        placeholder="Masukkan nomor kartu tani"
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                        {...field}
-                                        disabled={disabledAll}
-                                    />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            </div>
-                        </div>
                         </div>
 
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            {isReadOnly ? (
-                            <Button
-                                type="button"
-                                className="w-full h-12 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-200"
-                                disabled
-                            >
-                                Biodata sudah tersimpan • Mode baca
-                            </Button>
-                            ) : isLoading ? (
-                            <Button className="w-full h-12 rounded-md bg-blue-600 hover:bg-blue-700" disabled>
-                                <Loader2 className="animate-spin mr-2" size={18} />
-                                Sedang menyimpan data...
-                            </Button>
-                            ) : (
-                            <Button
-                                type="submit"
-                                className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
-                            >
-                                Simpan Data Petani
-                            </Button>
-                            )}
-                        </div>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                {isReadOnly ? (
+                                    <Button
+                                        type="button"
+                                        className="w-full h-12 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-200"
+                                        disabled
+                                    >
+                                        Biodata sudah tersimpan • Mode baca
+                                    </Button>
+                                ) : isLoading ? (
+                                    <Button className="w-full h-12 rounded-md bg-blue-600 hover:bg-blue-700" disabled>
+                                        <Loader2 className="animate-spin mr-2" size={18} />
+                                        Sedang menyimpan data...
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        type="submit"
+                                        className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
+                                    >
+                                        Simpan Data Petani
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     </form>
                 </Form>

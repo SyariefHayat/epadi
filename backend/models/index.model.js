@@ -19,9 +19,10 @@ const UserSchema = new mongoose.Schema({
 
 const FarmerSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    profilePicture: { type: String, default: "" },
     dateOfBirth: { type: Date, required: true },
     gender: { type: String, enum: ["Laki-laki", "Perempuan"], required: true },
-    phone: { type: String, trim: true, match: /^[0-9]{10,15}$/, required: true },
+    phone: { type: String, trim: true, match: /^[0-9]{10,15}$/, default: "" },
 
     postalCode: { type: String, trim: true, required: true },
     province: { type: String, trim: true, required: true },
