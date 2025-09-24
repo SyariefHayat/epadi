@@ -141,11 +141,11 @@ const Biodata = () => {
             if (!userData?._id) return;
 
             try {
-                const res = await apiInstanceExpress.get(`/farmer/biodata/${userData._id}`);
+                const response = await apiInstanceExpress.get(`/farmer/biodata/get/${userData._id}`);
                 if (ignore) return;
 
-                if (res?.status === 200 && res?.data) {
-                    const d = res.data;
+                if (response.status === 200) {
+                    const d = response.data.data;
 
                     form.reset({
                         nik: d.nik ?? userData.NIK ?? "",
@@ -228,7 +228,7 @@ const Biodata = () => {
             if (data.farmerCardNumber) fd.append("farmerCardNumber", data.farmerCardNumber);
             fd.append("user", userData._id);
 
-            const response = await apiInstanceExpress.post("/farmer/biodata", fd, {
+            const response = await apiInstanceExpress.post("/farmer/biodata/create", fd, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 

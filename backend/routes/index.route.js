@@ -27,6 +27,7 @@ router.post("/sign-up", authController.SignUpUser);
 router.post("/sign-in", authController.SignInUser);
 router.post("/sign-out", authController.SignOutUser);
 
-router.post("/farmer/biodata", upload.single("profilePhoto"), biodataController.FarmerBiodata);
+router.post("/farmer/biodata/create", upload.single("profilePhoto"), biodataController.FarmerBiodata);
+router.get("/farmer/biodata/get/:userId", biodataController.getFarmerBiodata);
 
 module.exports = router;

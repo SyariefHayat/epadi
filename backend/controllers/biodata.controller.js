@@ -138,6 +138,25 @@ const FarmerBiodata = async (req, res) => {
     }
 };
 
+const getFarmerBiodata = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        if (!userId) return ERR(res, 400, "User id wajib diisi");
+
+        const farmer = await Farmer.findOne({ user: userId })
+            .populate("user", "fullName email")
+            .lean(false);
+
+        if (!farmer) return ERR(res, 404, "Biodata farmer tidak ditemukan");
+
+        return SUC(res, 200, farmer, "Success getting data");
+    } catch (error) {
+        console.error("GetFarmerByUser error:", error);
+        return ERR(res, 500, "Internal Server Error");
+    }
+};
+
 module.exports = {
     FarmerBiodata,
+    getFarmerBiodata,
 }
