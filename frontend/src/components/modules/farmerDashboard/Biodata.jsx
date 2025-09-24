@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { userDataAtomStorage } from "@/jotai/atoms";
 import { apiInstanceExpress } from "@/service/apiInstance";
+import EachUtils from "@/utils/EachUtils";
 
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -80,7 +81,16 @@ const Biodata = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(false);
-    const [dobOpen, setDobOpen] = React.useState(false);
+    const [dobOpen, setDobOpen] = useState(false);
+
+    const [provinces, setProvinces] = useState([]);
+    const [regencies, setRegencies] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [villages, setVillages] = useState([]);
+
+    const [provId, setProvId] = useState(null);
+    const [regId, setRegId] = useState(null);
+    const [distId, setDistId] = useState(null);
 
     const fileRef = useRef(null);
     const [userData] = useAtom(userDataAtomStorage);
@@ -236,6 +246,57 @@ const Biodata = () => {
     const openPicker = () => {
         if (!disabledAll) fileRef.current?.click();
     };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json");
+                const data = await res.json();
+                setProvinces(data);
+            } catch (e) {
+                toast.error("Gagal memuat daftar provinsi");
+            }
+        })();
+    }, []);
+
+    useEffect(() => {
+        if (!provId) return;
+        (async () => {
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provId}.json`);
+                const data = await res.json();
+                setRegencies(data);
+            } catch (e) {
+                toast.error("Gagal memuat daftar kota/kabupaten");
+            }
+        })();
+    }, [provId]);
+
+    useEffect(() => {
+        if (!regId) return;
+        (async () => {
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regId}.json`);
+                const data = await res.json();
+                setDistricts(data);
+            } catch (e) {
+                toast.error("Gagal memuat daftar kecamatan");
+            }
+        })();
+    }, [regId]);
+
+    useEffect(() => {
+        if (!distId) return;
+        (async () => {
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${distId}.json`);
+                const data = await res.json();
+                setVillages(data);
+            } catch (e) {
+                toast.error("Gagal memuat daftar kelurahan/desa");
+            }
+        })();
+    }, [distId]);
 
     return (
         <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
@@ -504,56 +565,197 @@ const Biodata = () => {
 
                             <div className="p-8 space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {[
-                                    { name: "province", label: "Provinsi", ph: "Masukkan provinsi" },
-                                    { name: "city", label: "Kota/Kabupaten", ph: "Masukkan kota/kabupaten" },
-                                    { name: "subDistrict", label: "Kecamatan", ph: "Masukkan kecamatan" },
-                                    { name: "ward", label: "Kelurahan/Desa", ph: "Masukkan kelurahan/desa" },
-                                    { name: "postalCode", label: "Kode Pos", ph: "Masukkan kode pos" },
-                                ].map((f) => (
                                     <FormField
-                                    key={f.name}
-                                    control={form.control}
-                                    name={f.name}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                        <FormLabel className="text-sm font-medium text-gray-700">
-                                            {f.label}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                            placeholder={f.ph}
-                                            className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
-                                            {...field}
-                                            disabled={disabledAll}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                        </FormItem>
-                                    )}
+                                        control={form.control}
+                                        name="province"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">Provinsi</FormLabel>
+                                                <Select
+                                                    disabled={disabledAll || provinces.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        const found = provinces.find(p => p.name === val);
+                                                        const id = found?.id ?? null;
+                                                        setProvId(id);
+                                                        setRegencies([]); setDistricts([]); setVillages([]);
+                                                        setRegId(null); setDistId(null);
+                                                        form.setValue("city", "");
+                                                        form.setValue("subDistrict", "");
+                                                        form.setValue("ward", "");
+                                                    }}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih provinsi" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={provinces}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                ))}
 
-                                <FormField
-                                    control={form.control}
-                                    name="address"
-                                    render={({ field }) => (
-                                    <FormItem className="md:col-span-2">
-                                        <FormLabel className="text-sm font-medium text-gray-700">
-                                        Alamat Lengkap
-                                        </FormLabel>
-                                        <FormControl>
-                                        <Textarea
-                                            placeholder="Masukkan alamat lengkap"
-                                            className="min-h-[100px] border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none transition-colors"
-                                            {...field}
-                                            disabled={disabledAll}
-                                        />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                    )}
-                                />
+                                    <FormField
+                                        control={form.control}
+                                        name="city"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">Kota/Kabupaten</FormLabel>
+                                                <Select
+                                                    disabled={disabledAll || regencies.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        const found = regencies.find(r => r.name === val);
+                                                        const id = found?.id ?? null;
+                                                        setRegId(id);
+                                                        setDistricts([]); setVillages([]);
+                                                        setDistId(null);
+                                                        form.setValue("subDistrict", "");
+                                                        form.setValue("ward", "");
+                                                    }}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kota/kabupaten" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={regencies}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="subDistrict"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">Kecamatan</FormLabel>
+                                                <Select
+                                                    disabled={disabledAll || districts.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        const found = districts.find(d => d.name === val);
+                                                        const id = found?.id ?? null;
+                                                        setDistId(id);
+                                                        setVillages([]);
+                                                        form.setValue("ward", "");
+                                                    }}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kecamatan" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={districts}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="ward"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">Kelurahan/Desa</FormLabel>
+                                                <Select
+                                                    disabled={disabledAll || villages.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => field.onChange(val)}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kelurahan/desa" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={villages}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="postalCode"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-gray-700">Kode Pos</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Masukkan kode pos"
+                                                        className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                                                        {...field}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="address"
+                                        render={({ field }) => (
+                                            <FormItem className="md:col-span-2">
+                                                <FormLabel className="text-sm font-medium text-gray-700">Alamat Lengkap</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="Masukkan alamat lengkap (nama jalan, RT/RW, nomor rumah, dsb.)"
+                                                        className="min-h-[100px] border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none transition-colors"
+                                                        {...field}
+                                                        disabled={disabledAll}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </div>
                             </div>
                         </div>
