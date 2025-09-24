@@ -85,9 +85,13 @@ const Biodata = () => {
     const [dobOpen, setDobOpen] = useState(false);
 
     const [provinces, setProvinces] = useState([]);
+    const [provincesPrev, setProvincesPrev] = useState("");
     const [regencies, setRegencies] = useState([]);
+    const [regenciesPrev, setRegenciesPrev] = useState("");
     const [districts, setDistricts] = useState([]);
+    const [districtsPrev, setDistrictsPrev] = useState("");
     const [villages, setVillages] = useState([]);
+    const [villagesPrev, setVillagesPrev] = useState("");
 
     const [provId, setProvId] = useState(null);
     const [regId, setRegId] = useState(null);
@@ -146,11 +150,16 @@ const Biodata = () => {
 
                 if (response.status === 200) {
                     const d = response.data.data;
+                    
+                    setProvincesPrev(d.province);
+                    setRegenciesPrev(d.city);
+                    setDistrictsPrev(d.subDistrict);
+                    setVillagesPrev(d.ward);
 
                     form.reset({
                         nik: d.nik ?? userData.NIK ?? "",
                         fullName: d.fullName ?? userData.fullName ?? "",
-                        profilePhoto: undefined,
+                        profilePhoto: `${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}${d.profilePhoto}`,
 
                         dateOfBirth: d.dateOfBirth ? new Date(d.dateOfBirth) : undefined,
                         gender: d.gender ?? "",
@@ -174,7 +183,7 @@ const Biodata = () => {
                         farmerCardNumber: d.farmerCardNumber ?? "",
                     });
 
-                    if (d.profilePhotoUrl) setPreviewUrl(d.profilePhotoUrl);
+                    if (d.profilePicture) setPreviewUrl(`${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}${d.profilePicture}`);
 
                     setIsReadOnly(true);
                 }
@@ -298,6 +307,7 @@ const Biodata = () => {
             }
         })();
     }, [distId]);
+    
 
     return (
         <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
@@ -404,7 +414,7 @@ const Biodata = () => {
                                                 inputMode="numeric"
                                                 maxLength={16}
                                                 {...field}
-                                                readOnly
+                                                disabled
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -424,7 +434,7 @@ const Biodata = () => {
                                             <Input
                                                 placeholder="Nama lengkap sesuai KTP"
                                                 {...field}
-                                                readOnly
+                                                disabled
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -574,7 +584,7 @@ const Biodata = () => {
                                                 <FormLabel className="text-sm font-medium text-gray-700">Provinsi</FormLabel>
                                                 <Select
                                                     disabled={disabledAll || provinces.length === 0}
-                                                    value={field.value}
+                                                    value={provincesPrev || field.value}
                                                     onValueChange={(val) => {
                                                         field.onChange(val);
                                                         const found = provinces.find(p => p.name === val);
@@ -614,36 +624,40 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kota/Kabupaten</FormLabel>
-                                                <Select
-                                                    disabled={disabledAll || regencies.length === 0}
-                                                    value={field.value}
-                                                    onValueChange={(val) => {
-                                                        field.onChange(val);
-                                                        const found = regencies.find(r => r.name === val);
-                                                        const id = found?.id ?? null;
-                                                        setRegId(id);
-                                                        setDistricts([]); setVillages([]);
-                                                        setDistId(null);
-                                                        form.setValue("subDistrict", "");
-                                                        form.setValue("ward", "");
-                                                    }}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                            <SelectValue placeholder="Pilih kota/kabupaten" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <EachUtils 
-                                                            of={regencies}
-                                                            render={(item, index) => (
-                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                    {item.name}
-                                                                </SelectItem>
-                                                            )}
-                                                        />
-                                                    </SelectContent>
-                                                </Select>
+                                                {regenciesPrev ? (
+                                                    <Input value={regenciesPrev} readOnly disabled />
+                                                ) : (
+                                                    <Select
+                                                        disabled={disabledAll || regencies.length === 0}
+                                                        value={field.value}
+                                                        onValueChange={(val) => {
+                                                            field.onChange(val);
+                                                            const found = regencies.find(r => r.name === val);
+                                                            const id = found?.id ?? null;
+                                                            setRegId(id);
+                                                            setDistricts([]); setVillages([]);
+                                                            setDistId(null);
+                                                            form.setValue("subDistrict", "");
+                                                            form.setValue("ward", "");
+                                                        }}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                                <SelectValue placeholder="Pilih kota/kabupaten" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <EachUtils 
+                                                                of={regencies}
+                                                                render={(item, index) => (
+                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                        {item.name}
+                                                                    </SelectItem>
+                                                                )}
+                                                            />
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -655,34 +669,38 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kecamatan</FormLabel>
-                                                <Select
-                                                    disabled={disabledAll || districts.length === 0}
-                                                    value={field.value}
-                                                    onValueChange={(val) => {
-                                                        field.onChange(val);
-                                                        const found = districts.find(d => d.name === val);
-                                                        const id = found?.id ?? null;
-                                                        setDistId(id);
-                                                        setVillages([]);
-                                                        form.setValue("ward", "");
-                                                    }}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                            <SelectValue placeholder="Pilih kecamatan" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <EachUtils 
-                                                            of={districts}
-                                                            render={(item, index) => (
-                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                    {item.name}
-                                                                </SelectItem>
-                                                            )}
-                                                        />
-                                                    </SelectContent>
-                                                </Select>
+                                                {districtsPrev ? (
+                                                    <Input value={districtsPrev} readOnly disabled />
+                                                ) : (
+                                                    <Select
+                                                        disabled={disabledAll || districts.length === 0}
+                                                        value={field.value}
+                                                        onValueChange={(val) => {
+                                                            field.onChange(val);
+                                                            const found = districts.find(d => d.name === val);
+                                                            const id = found?.id ?? null;
+                                                            setDistId(id);
+                                                            setVillages([]);
+                                                            form.setValue("ward", "");
+                                                        }}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                                <SelectValue placeholder="Pilih kecamatan" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <EachUtils 
+                                                                of={districts}
+                                                                render={(item, index) => (
+                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                        {item.name}
+                                                                    </SelectItem>
+                                                                )}
+                                                            />
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -694,27 +712,31 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kelurahan/Desa</FormLabel>
-                                                <Select
-                                                    disabled={disabledAll || villages.length === 0}
-                                                    value={field.value}
-                                                    onValueChange={(val) => field.onChange(val)}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                            <SelectValue placeholder="Pilih kelurahan/desa" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <EachUtils 
-                                                            of={villages}
-                                                            render={(item, index) => (
-                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                    {item.name}
-                                                                </SelectItem>
-                                                            )}
-                                                        />
-                                                    </SelectContent>
-                                                </Select>
+                                                {villagesPrev ? (
+                                                    <Input value={villagesPrev} readOnly disabled />
+                                                ) : (
+                                                    <Select
+                                                        disabled={disabledAll || villages.length === 0}
+                                                        value={villagesPrev || field.value}
+                                                        onValueChange={(val) => field.onChange(val)}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                                <SelectValue placeholder="Pilih kelurahan/desa" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <EachUtils 
+                                                                of={villages}
+                                                                render={(item, index) => (
+                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                        {item.name}
+                                                                    </SelectItem>
+                                                                )}
+                                                            />
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
                                                 <FormMessage />
                                             </FormItem>
                                         )}
