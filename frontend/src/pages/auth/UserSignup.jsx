@@ -2,9 +2,9 @@ import z from 'zod';
 import { toast } from 'sonner';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { User, Tractor, EyeOff, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { User, Tractor, EyeOff, Eye } from 'lucide-react';
 
 import { 
     Form, 
@@ -112,7 +112,7 @@ const UserRegistrationForm = () => {
 
                                     <FormField
                                         control={form.control}
-                                        name="NIK"
+                                        name="NIK" 
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>NIK</FormLabel>
