@@ -1,11 +1,11 @@
 import { z } from "zod"
 import { toast } from "sonner"
-import { useAtom } from "jotai"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { zodResolver } from "@hookform/resolvers/zod"
+import { signInWithEmailAndPassword } from "firebase/auth"
 
 import { 
     Form, 
@@ -16,9 +16,9 @@ import {
     FormMessage 
 } from "@/components/ui/form"
 
+import { auth } from "@/services/firebase"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { userDataAtomStorage } from "@/jotai/atoms"
 import { apiInstanceExpress } from "@/services/apiInstance"
 
 const userSigninSchema = z.object({
@@ -35,16 +35,14 @@ const userSigninSchema = z.object({
 const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
-    
-    const [, setUserDataAtom] = useAtom(userDataAtomStorage)
-    
+
     const navigate = useNavigate()
 
     const form = useForm({
         resolver: zodResolver(userSigninSchema),
         defaultValues: {
-        NIK: "",
-        password: "",
+            NIK: "",
+            password: "",
         }
     });
 
@@ -52,26 +50,46 @@ const LoginForm = () => {
         setIsLoading(true);
 
         try {
-            const response = await apiInstanceExpress.post("/sign-in", data);
+            const payload = {
+                email: `${data.NIK}@gmail.com`,
+                password: data.password
+            };
+
+            const signIn = await signInWithEmailAndPassword(auth, payload.email, payload.password);
+            const user = signIn.user;
+
+            const response = await apiInstanceExpress.post("/sign-in", {
+                uid: user.uid,
+                email: payload.email,
+            });
+
             if (response.status === 200) {
                 toast.success("Login berhasil!");
-
-                setUserDataAtom(response.data.data);
 
                 setTimeout(() => {
                     navigate(`/dashboard/${response.data.data.role}`);
                 }, 2000)
             }
         } catch (error) {
-            toast.error(`Login gagal. ${error.response.data.message}`);
+            let errorMessage = "Gagal masuk. Silakan coba lagi.";
+
+            if (error.code === "auth/invalid-email") {
+                errorMessage = "Format email tidak valid. Silakan masukkan email yang benar.";
+            } else if (error.code === "auth/too-many-requests") {
+                errorMessage = "Terlalu banyak percobaan masuk. Silakan coba lagi nanti.";
+            } else if (error.code === "auth/invalid-credential") {
+                errorMessage = "Email atau kata sandi salah. Silakan coba lagi.";
+            }
+
+            toast.error(errorMessage, {
+                duration: 3000,
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(prev => !prev);
-    };
+    const togglePasswordVisibility = () => setShowPassword(prev => !prev);
 
     return (
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">

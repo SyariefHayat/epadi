@@ -35,16 +35,18 @@ const SignUpUser = async (req, res) => {
 };
 
 const SignInUser = async (req, res) => {
-    const { NIK, password } = req.body;
+    const { uid, email } = req.body;
 
     try {
-        if (!NIK || !password) return ERR(res, 400, "NIK dan Password wajib diisi");
+        if (!uid || !email) return ERR(res, 400, "uid dan email wajib diisi");
 
-        const user = await User.findOne({ NIK });
-        if (!user) return ERR(res, 404, "User tidak terdaftar");
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return ERR(res, 401, "Password salah");
+        const user = await User.findOne({ 
+            $or: [
+                { uid },
+                { email },
+            ]
+        });
+        if (!user) return ERR(res, 404, 'User tidak terdaftar');
 
         return SUC(res, 200, user, "Login successfully");
     } catch (error) {

@@ -99,7 +99,7 @@ const NavBar = () => {
 
                 <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
                     <a 
-                        href="/login" 
+                        href="/signin" 
                         className="text-gray-700 hover:text-green-600 transition-colors duration-200 font-medium text-sm xl:text-base"
                     >
                         Login

@@ -1,14 +1,12 @@
-import { useAtomValue } from "jotai";
-import { Navigate, Outlet } from "react-router-dom";
-
-import { userDataAtomStorage } from "@/jotai/atoms";
+import { useAuth } from '@/context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-    const userData = useAtomValue(userDataAtomStorage);
+    const { currentUser, loading } = useAuth();
 
-    if (!userData) return <Navigate to="/" replace />;
+    if (loading) return <div>Loading...</div>;
 
-    return children ? children : <Outlet />;
+    return currentUser ? children : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

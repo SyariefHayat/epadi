@@ -1,4 +1,3 @@
-import Login from "@/pages/auth/Login"
 import Community from "@/pages/community"
 import Cooperation from "@/pages/cooperation"
 import Seller from "@/pages/dashboard/Seller"
@@ -26,6 +25,7 @@ import { ErrorBoundary } from "@/pages/error"
 import ProtectedRoute from "@/components/modules/auth/ProtectedRoute"
 import RoleSelection from "@/pages/auth/RoleSelection"
 import SignUp from "@/pages/auth/SignUp"
+import SignIn from "@/pages/auth/SignIn"
 
 const routes = [
     { 
@@ -74,8 +74,8 @@ const routes = [
         errorElement: <ErrorBoundary />
     },
     { 
-        path: "/login", 
-        element: <Login />,
+        path: "/signin", 
+        element: <SignIn />,
         errorElement: <ErrorBoundary />,
     },
     { 

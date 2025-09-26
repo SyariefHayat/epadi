@@ -3,7 +3,7 @@ import React from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import LoginForm from '@/components/modules/auth/LoginForm';
 
-const Login = () => {
+const SignIn = () => {
     return (
         <section className="min-h-screen flex items-center justify-center px-4 py-10 bg-gray-100">
             <Toaster />
@@ -14,4 +14,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default SignIn
