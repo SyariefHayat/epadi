@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
+    uid: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    fullName: { type: String, required: true, unique: true, trim: true },
     role: { 
         type: String, 
         enum: ["farmer", "buyer", "distributor", "investor"], 
         default: "farmer" 
     },
-
     NIK: {
         type: String, 
         required: true, 
@@ -16,10 +18,6 @@ const UserSchema = new mongoose.Schema({
         maxlength: 16, 
         match: /^[0-9]{16}$/ 
     },
-    
-    fullName: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
-    token: { type: String }
 });
 
 module.exports = {

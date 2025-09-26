@@ -1,5 +1,6 @@
 const { SUC, ERR } = require("../utils/response");
-const { Farmer, User } = require("../models/index.model");
+const { User } = require("../models/user.model");
+const { Farmer } = require("../models/farmer.model");
 
 const FarmerBiodata = async (req, res) => {
     const profileImgFile = req.file;

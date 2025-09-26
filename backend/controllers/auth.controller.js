@@ -2,13 +2,13 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 
 const { SUC, ERR } = require("../utils/response");
-const { User } = require("../models/index.model");
+const { User } = require("../models/user.model");
 
 const SignUpUser = async (req, res) => {
-    const { role, fullName, NIK, password } = req.body;
+    const { uid, email, fullName, role, NIK } = req.body;
 
     try {
-        if (!role || !NIK || !fullName || !password) return ERR(res, 400, "NIK, Full Name, dan Password wajib diisi");
+        if (!uid || !email || !fullName || !role || !NIK) return ERR(res, 400, "uid, email, fullName, role, dan NIK wajib diisi");
 
         const existingUser = await User.findOne({ 
             $or: [
@@ -19,17 +19,15 @@ const SignUpUser = async (req, res) => {
 
         if (existingUser) return ERR(res, 409, "NIK atau nama lengkap sudah terdaftar");
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         const user = await User.create({
+            uid,
+            email,
+            fullName,
             role,
             NIK,
-            fullName,
-            password: hashedPassword
         });
 
         return SUC(res, 201, user, "User created successfully");
-
     } catch (error) {
         console.error(error);
         return ERR(res, 500, "Signup failed");

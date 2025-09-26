@@ -5,6 +5,7 @@ import { EyeOff, Eye } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useParams } from 'react-router-dom';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { 
     Form,
@@ -15,6 +16,7 @@ import {
     FormMessage
 } from '@/components/ui/form';
 
+import { auth } from '@/services/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
@@ -65,21 +67,53 @@ const SignUp = () => {
 
     const handleSignup = async (data) => {
         setIsLoading(true);
-
         try {
-            const payload = {...data, role };
-            const response = await apiInstanceExpress.post("/sign-up", payload);
+            const payload = {...data, role, email: `${data.NIK}@gmail.com` };
 
-            if (response.status === 201) {
-                toast.success("Pendaftaran berhasil! Silahkan login.");
+            const register = await createUserWithEmailAndPassword(
+                auth, 
+                payload.email, 
+                payload.password
+            );
 
-                setTimeout(() => {
-                    navigate("/login");
-                }, 2000);
+            const user = register.user;
+            await updateProfile(user, { displayName: payload.fullName });
+
+            try {
+                const response = await apiInstanceExpress.post("/sign-up", {
+                    uid: user.uid,
+                    email: user.email,
+                    fullName: user.displayName,
+                    role: payload.role,
+                    NIK: payload.NIK
+                });
+
+                if (response.status === 201) {
+                    toast.success("Pendaftaran berhasil! Silahkan login.");
+                    await auth.signOut();
+
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 1000);
+                };
+            } catch (error) {
+                await user.delete();
+                throw new Error("Gagal menyimpan data anda: " + error.message);
             };
         } catch (error) {
-            console.error(error);
-            toast.error(`${error.response.data.message || 'Gagal mendaftar. Silahkan coba lagi.'}`);
+            let errorMessage = "Pendaftaran gagal. Silakan coba lagi.";
+
+            if (error.code === "auth/email-already-in-use") {
+                errorMessage = "Email ini sudah terdaftar. Silakan gunakan email lain.";
+            } else if (error.code === "auth/invalid-email") {
+                errorMessage = "Format email tidak valid. Silakan masukkan email yang benar.";
+            } else if (error.code === "auth/weak-password") {
+                errorMessage = "Kata sandi terlalu lemah. Gunakan minimal 6 karakter.";
+            }
+
+            toast.error(errorMessage, {
+                duration: 3000,
+            });
         } finally {
             setIsLoading(false);
         }

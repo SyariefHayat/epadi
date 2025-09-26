@@ -1,22 +1,5 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-    role: { type: String, enum: ["farmer", "buyer", "distributor", "investor"], default: "farmer" },
-    
-    NIK: { 
-        type: String, 
-        required: true, 
-        unique: true, 
-        trim: true, 
-        minlength: 16, 
-        maxlength: 16, 
-        match: /^[0-9]{16}$/ 
-    },
-    
-    fullName: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
-});
-
 const FarmerSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     profilePicture: { type: String, default: "" },
@@ -44,6 +27,5 @@ const FarmerSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = {
-    User: mongoose.model("User", UserSchema),
     Farmer: mongoose.model("Farmer", FarmerSchema),
 };
