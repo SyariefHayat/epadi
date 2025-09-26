@@ -36,7 +36,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { userDataAtomStorage } from "@/jotai/atoms";
-import { apiInstanceExpress } from "@/service/apiInstance";
+import { apiInstanceExpress } from "@/services/apiInstance";
 
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB

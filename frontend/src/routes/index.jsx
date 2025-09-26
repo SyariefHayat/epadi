@@ -1,8 +1,8 @@
 import Login from "@/pages/auth/Login"
-import ProfileSetup from "@/pages/auth/ProfileSetup"
-import Otp from "@/pages/auth/Otp"
-import Success from "@/pages/auth/Success"
-import VerifyOtp from "@/pages/auth/VerifyOtp"
+import ProfileSetup from "@/pages/trash/ProfileSetup"
+import Otp from "@/pages/trash/Otp"
+import Success from "@/pages/trash/Success"
+import VerifyOtp from "@/pages/trash/VerifyOtp"
 import Community from "@/pages/community"
 import Cooperation from "@/pages/cooperation"
 import Seller from "@/pages/dashboard/Seller"
@@ -21,19 +21,20 @@ import StoreDetail from "@/pages/mart/Store"
 import StoreRecommendations from "@/pages/mart/StoreRecommendation"
 import News from "@/pages/news"
 import PriceMarket from "@/pages/priceMarket"
-import SignUp from "@/pages/auth/SignUp"
-import FarmerSignup from "@/pages/auth/UserSignup"
-import DistributorSignup from "@/pages/auth/DistributorSignup"
-import InvestorSignup from "@/pages/auth/InvestorSignup"
-import BuyerSignup from "@/pages/auth/BuyerSignup"
+import FarmerSignup from "@/pages/auth/SignUp"
+import DistributorSignup from "@/pages/trash/DistributorSignup"
+import InvestorSignup from "@/pages/trash/InvestorSignup"
+import BuyerSignup from "@/pages/trash/BuyerSignup"
 import Farmer from "@/pages/dashboard/Farmer"
 import Distributor from "@/pages/dashboard/Distributor"
 import Investor from "@/pages/dashboard/Investor"
 import AboutUs from "@/pages/aboutUs"
-import AdminLogin from "@/pages/auth/AdminLogin"
+import AdminLogin from "@/pages/trash/AdminLogin"
 import Admin from "@/pages/dashboard/Admin"
 import { ErrorBoundary } from "@/pages/error"
 import ProtectedRoute from "@/components/modules/auth/ProtectedRoute"
+import RoleSelection from "@/pages/auth/RoleSelection"
+import SignUp from "@/pages/auth/SignUp"
 
 const routes = [
     { 
@@ -72,6 +73,16 @@ const routes = [
         errorElement: <ErrorBoundary />,
     },
     { 
+        path: "/signup",
+        element: <RoleSelection />,
+        errorElement: <ErrorBoundary />,
+    },
+    {
+        path: "/signup/:role",
+        element: <SignUp />,
+        errorElement: <ErrorBoundary />
+    },
+    { 
         path: "/login", 
         element: <Login />,
         errorElement: <ErrorBoundary />,
@@ -81,51 +92,46 @@ const routes = [
         element: <AdminLogin />,
         errorElement: <ErrorBoundary />,
     },
-    { 
-        path: "/signup", 
-        element: <SignUp />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/farmer", 
-        element: <FarmerSignup />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/distributor", 
-        element: <DistributorSignup />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/investor", 
-        element: <InvestorSignup />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/buyer", 
-        element: <BuyerSignup />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/otp", 
-        element: <Otp />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/verify-otp", 
-        element: <VerifyOtp />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/profile-setup", 
-        element: <ProfileSetup />,
-        errorElement: <ErrorBoundary />,
-    },
-    { 
-        path: "/signup/success", 
-        element: <Success />,
-        errorElement: <ErrorBoundary />,
-    },
+    // { 
+    //     path: "/signup/farmer", 
+    //     element: <FarmerSignup />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/distributor", 
+    //     element: <DistributorSignup />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/investor", 
+    //     element: <InvestorSignup />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/buyer", 
+    //     element: <BuyerSignup />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/otp", 
+    //     element: <Otp />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/verify-otp", 
+    //     element: <VerifyOtp />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/profile-setup", 
+    //     element: <ProfileSetup />,
+    //     errorElement: <ErrorBoundary />,
+    // },
+    // { 
+    //     path: "/signup/success", 
+    //     element: <Success />,
+    //     errorElement: <ErrorBoundary />,
+    // },
     { 
         path: "/dashboard/admin", 
         element: <Admin />,

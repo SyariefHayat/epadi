@@ -45,7 +45,60 @@ export const LIST_NAVBAR = [
     },
 ]
 
-export const LIST_NAVBAR_DB = [
+export const LIST_NAVBAR_ADMIN_DB = [
+    {
+        title: "Main",
+        items: [
+            {
+                title: "Dashboard",
+                url: "#",
+                icon: Home,
+            },
+        ],
+    },
+    {
+        title: "Manajemen Data",
+        items: [
+            {
+                title: "User",
+                url: "#",
+                icon: User,
+            },
+            {
+                title: "Petani",
+                url: "#",
+                icon: User,
+            },
+            {
+                title: "Distributor",
+                url: "#",
+                icon: HandCoins,
+            },
+            {
+                title: "Investor",
+                url: "#",
+                icon: Wallet,
+            },
+            {
+                title: "Pembeli",
+                url: "#",
+                icon: ClipboardList,
+            },
+        ],
+    },
+    {
+        title: "Lainnya",
+        items: [
+            {
+                title: "Pengaturan",
+                url: "#",
+                icon: Settings,
+            },
+        ],
+    },
+]
+
+export const LIST_NAVBAR_FARMER_DB = [
     {
         title: "Main",
         items: [

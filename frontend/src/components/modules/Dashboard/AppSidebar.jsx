@@ -17,7 +17,7 @@ import {
 
 import NavUser from "./NavUser"
 import EachUtils from "@/utils/EachUtils"
-import { LIST_NAVBAR_DB } from "@/constants/listNavbar"
+import { LIST_NAVBAR_FARMER_DB } from "@/constants/listNavbar"
 
 const AppSidebar = () => {
     return (
@@ -42,7 +42,7 @@ const AppSidebar = () => {
 
             <SidebarContent>
                 <EachUtils
-                    of={LIST_NAVBAR_DB}
+                    of={LIST_NAVBAR_FARMER_DB}
                     render={(item, index) => (
                         <SidebarGroup key={index} className="py-1 px-2">
                             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>

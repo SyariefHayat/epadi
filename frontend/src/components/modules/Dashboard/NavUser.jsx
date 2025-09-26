@@ -30,7 +30,7 @@ import {
 
 import { getInitial } from "@/utils/getInitial";
 import { userDataAtomStorage } from "@/jotai/atoms";
-import { apiInstanceExpress } from "@/service/apiInstance";
+import { apiInstanceExpress } from "@/services/apiInstance";
 
 const NavUser = () => {
 	const { isMobile } = useSidebar();

@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { userDataAtomStorage } from "@/jotai/atoms"
-import { apiInstanceExpress } from "@/service/apiInstance"
+import { apiInstanceExpress } from "@/services/apiInstance"
 
 const userSigninSchema = z.object({
     NIK: z.string()
