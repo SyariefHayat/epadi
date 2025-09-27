@@ -1,6 +1,7 @@
 const router = require("express").Router();
 // const upload = require('../middlewares/upload');
 const upload = require("../middlewares/upload");
+const verifyToken = require("../middlewares/verifyToken");
 const authController = require("../controllers/auth.controller");
 const biodataController = require("../controllers/biodata.controller");
 // const donorController = require("../controllers/donor.controller");
@@ -25,7 +26,7 @@ router.get("/", (req, res) => {
 
 router.post("/sign-up", authController.SignUpUser);
 router.post("/sign-in", authController.SignInUser);
-router.post("/sign-out", authController.SignOutUser);
+router.post("/sign-out", verifyToken, authController.SignOutUser);
 
 router.post("/farmer/biodata/create", upload.single("profilePhoto"), biodataController.FarmerBiodata);
 router.get("/farmer/biodata/get/:userId", biodataController.getFarmerBiodata);

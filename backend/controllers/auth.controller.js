@@ -1,8 +1,7 @@
 require("dotenv").config();
-const bcrypt = require("bcrypt");
 
-const { SUC, ERR } = require("../utils/response");
 const { User } = require("../models/user.model");
+const { SUC, ERR } = require("../utils/response");
 
 const SignUpUser = async (req, res) => {
     const { uid, email, fullName, role, NIK } = req.body;
@@ -56,12 +55,12 @@ const SignInUser = async (req, res) => {
 };
 
 const SignOutUser = async (req, res) => {
-    const { NIK } = req.body;
+    const id = req.user._id;
 
     try {
-        if (!NIK) return ERR(res, 400, "NIK wajib diisi");
+        if (!id) return ERR(res, 400, "NIK wajib diisi");
 
-        const user = await User.findOne({ NIK });
+        const user = await User.findById(id);
         if (!user) return ERR(res, 404, "User tidak ditemukan");
         
         return SUC(res, 200, null, "Logout berhasil");

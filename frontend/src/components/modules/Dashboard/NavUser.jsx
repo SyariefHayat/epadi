@@ -1,6 +1,6 @@
 import React from "react"
 import { toast } from "sonner";
-import { useAtom } from "jotai";
+import { signOut } from "firebase/auth";
 
 import {
 	ChevronsUpDown,
@@ -28,33 +28,35 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 
+import { auth } from "@/services/firebase";
 import { getInitial } from "@/utils/getInitial";
-import { userDataAtomStorage } from "@/jotai/atoms";
+import { useAuth } from "@/context/AuthContext";
 import { apiInstanceExpress } from "@/services/apiInstance";
 
 const NavUser = () => {
+	const { currentUser } = useAuth();
 	const { isMobile } = useSidebar();
-	const [userData, setUserData] = useAtom(userDataAtomStorage);
 
-	const handleLogout = async () => {
-		if (!userData) return;
+	const handleSignOut = async () => {
+		const toastId = toast.loading("Mengeluarkan akun anda...");
 
 		try {
-			const payload = { NIK: userData.NIK };
-			const response = await apiInstanceExpress.post("/sign-out", payload);
-			if (response.status === 200) {
-				toast.success("Sign out berhasil");
-				
-				setTimeout(() => {
-					setUserData(null);
-					localStorage.removeItem("userData");
-				}, 2000);
-			}
+			const token = await currentUser.getIdToken();
+			const userSignOut = await apiInstanceExpress.post("/sign-out", {}, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
+
+			if (userSignOut.status === 200) {
+				toast.success("Sign out berhasil", { id: toastId });
+				await signOut(auth);
+			};
 		} catch (error) {
-			toast.error("Sign out gagal");
 			console.error(error);
-		}
-	}
+			toast.error("Sign out gagal", { id: toastId });
+		};
+	};
 
 	return (
 		<SidebarMenu>
@@ -99,7 +101,7 @@ const NavUser = () => {
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+						<DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
 							<LogOut />
 							Keluar
 						</DropdownMenuItem>
