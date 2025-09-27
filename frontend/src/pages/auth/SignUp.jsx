@@ -93,7 +93,7 @@ const SignUp = () => {
                     await auth.signOut();
 
                     setTimeout(() => {
-                        navigate("/login");
+                        navigate("/signin");
                     }, 1000);
                 };
             } catch (error) {

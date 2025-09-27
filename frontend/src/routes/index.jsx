@@ -26,6 +26,7 @@ import ProtectedRoute from "@/components/modules/auth/ProtectedRoute"
 import RoleSelection from "@/pages/auth/RoleSelection"
 import SignUp from "@/pages/auth/SignUp"
 import SignIn from "@/pages/auth/SignIn"
+import ProtectedAdminRoute from "@/components/modules/auth/ProtectedAdminRoute"
 
 const routes = [
     { 
@@ -80,7 +81,10 @@ const routes = [
     },
     { 
         path: "/dashboard/admin", 
-        element: <Admin />,
+        element: 
+            <ProtectedAdminRoute>
+                <Admin />
+            </ProtectedAdminRoute>,
         errorElement: <ErrorBoundary />,
     },
     { 
