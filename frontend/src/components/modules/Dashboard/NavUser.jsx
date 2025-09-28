@@ -34,8 +34,8 @@ import { useAuth } from "@/context/AuthContext";
 import { apiInstanceExpress } from "@/services/apiInstance";
 
 const NavUser = () => {
-	const { currentUser } = useAuth();
 	const { isMobile } = useSidebar();
+	const { currentUser, userData } = useAuth();
 
 	const handleSignOut = async () => {
 		const toastId = toast.loading("Mengeluarkan akun anda...");
@@ -68,16 +68,11 @@ const NavUser = () => {
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								{/* <AvatarImage 
-									src={getProfilePicture(userData)}
-									referrerPolicy="no-referrer"
-									className="object-cover"
-								/> */}
-								<AvatarFallback className="rounded-lg">{getInitial("Shadcn")}</AvatarFallback>
+								<AvatarFallback className="rounded-lg">{getInitial(userData.fullName)}</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-semibold">Shadcn</span>
-								<span className="truncate text-xs">shadcn@example.com</span>
+								<span className="truncate font-semibold">{userData.fullName}</span>
+								<span className="truncate text-xs">{userData.role}</span>
 							</div>
 							<ChevronsUpDown className="ml-auto size-4" />
 						</SidebarMenuButton>
@@ -91,12 +86,11 @@ const NavUser = () => {
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									{/* <AvatarImage src={getProfilePicture(userData)} /> */}
-									<AvatarFallback className="rounded-lg">{getInitial("Shadcn")}</AvatarFallback>
+									<AvatarFallback className="rounded-lg">{getInitial(userData.fullName)}</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">Shadcn</span>
-								    <span className="truncate text-xs">shadcn@example.com</span>
+									<span className="truncate font-semibold">{userData.fullName}</span>
+									<span className="truncate text-xs">{userData.role}</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>

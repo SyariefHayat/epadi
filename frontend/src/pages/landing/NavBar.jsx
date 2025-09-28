@@ -186,7 +186,7 @@ const NavBar = () => {
                         
                         <li className="pt-4 border-t border-gray-200 mt-4">
                             <a
-                                href="/login"
+                                href="/signin"
                                 className="block text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 font-medium py-3 px-4 rounded-lg"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >

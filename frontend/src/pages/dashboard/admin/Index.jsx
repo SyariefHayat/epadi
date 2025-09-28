@@ -56,7 +56,7 @@ const Admin = () => {
     const [distributors, setDistributors] = useState([]);
     const [investors, setInvestors] = useState([]);
     const [buyers, setBuyers] = useState([]);
-    
+
     useEffect(() => {
         if (!currentUser) return;
 

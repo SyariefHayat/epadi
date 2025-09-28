@@ -15,11 +15,18 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 
+import { 
+    LIST_NAVBAR_ADMIN_DB, 
+    LIST_NAVBAR_FARMER_DB 
+} from "@/constants/listNavbar"
+
 import NavUser from "./NavUser"
 import EachUtils from "@/utils/EachUtils"
-import { LIST_NAVBAR_FARMER_DB } from "@/constants/listNavbar"
+import { useAuth } from "@/context/AuthContext"
 
 const AppSidebar = () => {
+    const { userData } = useAuth();
+
     return (
         <Sidebar>
             <SidebarHeader className="h-16 border-b border-sidebar-border">
@@ -42,7 +49,7 @@ const AppSidebar = () => {
 
             <SidebarContent>
                 <EachUtils
-                    of={LIST_NAVBAR_FARMER_DB}
+                    of={userData.role === "admin" ? LIST_NAVBAR_ADMIN_DB : LIST_NAVBAR_FARMER_DB}
                     render={(item, index) => (
                         <SidebarGroup key={index} className="py-1 px-2">
                             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>

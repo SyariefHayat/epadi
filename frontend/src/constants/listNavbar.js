@@ -51,37 +51,32 @@ export const LIST_NAVBAR_ADMIN_DB = [
         items: [
             {
                 title: "Dashboard",
-                url: "#",
+                url: "/admin/dashboard",
                 icon: Home,
             },
         ],
     },
     {
-        title: "Manajemen Data",
+        title: "Manajemen User",
         items: [
             {
-                title: "User",
-                url: "#",
-                icon: User,
-            },
-            {
                 title: "Petani",
-                url: "#",
+                url: "/admin/users/petani",
                 icon: User,
             },
             {
                 title: "Distributor",
-                url: "#",
+                url: "/admin/users/distributor",
                 icon: HandCoins,
             },
             {
                 title: "Investor",
-                url: "#",
+                url: "/admin/users/investor",
                 icon: Wallet,
             },
             {
                 title: "Pembeli",
-                url: "#",
+                url: "/admin/users/pembeli",
                 icon: ClipboardList,
             },
         ],
@@ -91,12 +86,12 @@ export const LIST_NAVBAR_ADMIN_DB = [
         items: [
             {
                 title: "Pengaturan",
-                url: "#",
+                url: "/admin/settings",
                 icon: Settings,
             },
         ],
     },
-]
+];
 
 export const LIST_NAVBAR_FARMER_DB = [
     {

@@ -20,13 +20,14 @@ import Farmer from "@/pages/dashboard/Farmer"
 import Distributor from "@/pages/dashboard/Distributor"
 import Investor from "@/pages/dashboard/Investor"
 import AboutUs from "@/pages/aboutUs"
-import Admin from "@/pages/dashboard/Admin"
+import Admin from "@/pages/dashboard/admin/Index"
 import { ErrorBoundary } from "@/pages/error"
 import ProtectedRoute from "@/components/modules/auth/ProtectedRoute"
 import RoleSelection from "@/pages/auth/RoleSelection"
 import SignUp from "@/pages/auth/SignUp"
 import SignIn from "@/pages/auth/SignIn"
 import ProtectedAdminRoute from "@/components/modules/auth/ProtectedAdminRoute"
+import Farmers from "@/pages/dashboard/admin/Farmers"
 
 const routes = [
     { 
@@ -80,10 +81,18 @@ const routes = [
         errorElement: <ErrorBoundary />,
     },
     { 
-        path: "/dashboard/admin", 
+        path: "/admin/dashboard", 
         element: 
             <ProtectedAdminRoute>
                 <Admin />
+            </ProtectedAdminRoute>,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/admin/users/petani", 
+        element:
+            <ProtectedAdminRoute>
+                <Farmers />
             </ProtectedAdminRoute>,
         errorElement: <ErrorBoundary />,
     },
