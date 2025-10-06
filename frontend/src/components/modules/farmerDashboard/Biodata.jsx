@@ -6,6 +6,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { User, MapPin, Sprout, Loader2, Image as ImageIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { 
     Popover, 
@@ -37,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { userDataAtomStorage } from "@/jotai/atoms";
 import { apiInstanceExpress } from "@/services/apiInstance";
+import { useAuth } from "@/context/AuthContext";
 
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -79,26 +81,22 @@ const FarmerBiodata = z.object({
 });
 
 const Biodata = () => {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(null);
-    const [isReadOnly, setIsReadOnly] = useState(false);
     const [dobOpen, setDobOpen] = useState(false);
 
     const [provinces, setProvinces] = useState([]);
-    const [provincesPrev, setProvincesPrev] = useState("");
     const [regencies, setRegencies] = useState([]);
-    const [regenciesPrev, setRegenciesPrev] = useState("");
     const [districts, setDistricts] = useState([]);
-    const [districtsPrev, setDistrictsPrev] = useState("");
     const [villages, setVillages] = useState([]);
-    const [villagesPrev, setVillagesPrev] = useState("");
 
     const [provId, setProvId] = useState(null);
     const [regId, setRegId] = useState(null);
     const [distId, setDistId] = useState(null);
 
     const fileRef = useRef(null);
-    const [userData] = useAtom(userDataAtomStorage);
+    const { userData } = useAuth();
 
     const form = useForm({
         resolver: zodResolver(FarmerBiodata),
@@ -130,8 +128,6 @@ const Biodata = () => {
         },
     });
 
-    const disabledAll = useMemo(() => isLoading || isReadOnly, [isLoading, isReadOnly]);
-
     useEffect(() => {
         return () => {
             if (previewUrl && previewUrl.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
@@ -141,7 +137,7 @@ const Biodata = () => {
     useEffect(() => {
         let ignore = false;
 
-        const fetchExisting = async () => {
+        const checkExisting = async () => {
             if (!userData?._id) return;
 
             try {
@@ -149,43 +145,8 @@ const Biodata = () => {
                 if (ignore) return;
 
                 if (response.status === 200) {
-                    const d = response.data.data;
-                    
-                    setProvincesPrev(d.province);
-                    setRegenciesPrev(d.city);
-                    setDistrictsPrev(d.subDistrict);
-                    setVillagesPrev(d.ward);
-
-                    form.reset({
-                        nik: d.nik ?? userData.NIK ?? "",
-                        fullName: d.fullName ?? userData.fullName ?? "",
-                        profilePhoto: `${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}${d.profilePhoto}`,
-
-                        dateOfBirth: d.dateOfBirth ? new Date(d.dateOfBirth) : undefined,
-                        gender: d.gender ?? "",
-                        phone: d.phone ?? "",
-
-                        postalCode: d.postalCode ?? "",
-                        province: d.province ?? "",
-                        city: d.city ?? "",
-                        subDistrict: d.subDistrict ?? "",
-                        ward: d.ward ?? "",
-                        address: d.address ?? "",
-
-                        landArea: d.landArea ?? 0,
-                        riceVariety: d.riceVariety ?? "",
-                        estimatedHarvest: d.estimatedHarvest ?? 0,
-                        howLongBecomeFarmer: d.howLongBecomeFarmer ?? "",
-                        landOwnership: d.landOwnership ?? "",
-                        landLocation: d.landLocation ?? "",
-                        plantingSeason: d.plantingSeason ?? "",
-                        farmerGroup: d.farmerGroup ?? "",
-                        farmerCardNumber: d.farmerCardNumber ?? "",
-                    });
-
-                    if (d.profilePicture) setPreviewUrl(`${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}${d.profilePicture}`);
-
-                    setIsReadOnly(true);
+                    toast.info("Biodata Anda sudah tersimpan");
+                    navigate("admin/dashboard");
                 }
             } catch (err) {
                 if (err?.response?.status !== 404) {
@@ -195,16 +156,14 @@ const Biodata = () => {
             }
         };
 
-        fetchExisting();
+        checkExisting();
 
         return () => {
             ignore = true;
         };
-    }, [userData?._id]);
+    }, [userData?._id, navigate]);
 
     const handleSubmit = async (data) => {
-        if (isReadOnly) return;
-
         setIsLoading(true);
 
         try {
@@ -243,7 +202,9 @@ const Biodata = () => {
 
             if (response.status === 201) {
                 toast.success("Biodata berhasil disimpan");
-                setIsReadOnly(true);
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 1500);
             }
         } catch (error) {
             console.error("Error:", error?.response?.data?.message || error?.message);
@@ -254,7 +215,7 @@ const Biodata = () => {
     };
 
     const openPicker = () => {
-        if (!disabledAll) fileRef.current?.click();
+        if (!isLoading) fileRef.current?.click();
     };
 
     useEffect(() => {
@@ -315,9 +276,7 @@ const Biodata = () => {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Biodata Petani</h1>
                     <p className="text-gray-600">
-                        {isReadOnly
-                        ? "Biodata Anda sudah tersimpan. Form dalam mode baca."
-                        : "Lengkapi informasi biodata Anda sebagai petani"}
+                        Lengkapi informasi biodata Anda sebagai petani
                     </p>
                 </div>
 
@@ -341,17 +300,17 @@ const Biodata = () => {
                                         render={({ field }) => (
                                         <FormItem className="md:col-span-2">
                                             <FormLabel className="text-sm font-medium text-gray-700">
-                                            Foto Profil {isReadOnly ? "(tersimpan)" : "(opsional)"} 
+                                            Foto Profil (opsional)
                                             </FormLabel>
 
                                             <div className="flex items-center gap-4">
                                                 <div
                                                     role="button"
-                                                    tabIndex={disabledAll ? -1 : 0}
-                                                    aria-disabled={disabledAll}
+                                                    tabIndex={isLoading ? -1 : 0}
+                                                    aria-disabled={isLoading}
                                                     onClick={openPicker}
                                                     onKeyDown={(e) => {
-                                                        if (!disabledAll && (e.key === "Enter" || e.key === " ")) {
+                                                        if (!isLoading && (e.key === "Enter" || e.key === " ")) {
                                                             e.preventDefault();
                                                             openPicker();
                                                         }
@@ -359,11 +318,11 @@ const Biodata = () => {
                                                     className={[
                                                     "w-1/2 h-52 rounded-xl border border-gray-200 overflow-hidden bg-gray-50",
                                                     "flex items-center justify-center",
-                                                    disabledAll
+                                                    isLoading
                                                         ? "cursor-not-allowed opacity-70"
                                                         : "cursor-pointer hover:ring-2 hover:ring-blue-200",
                                                     ].join(" ")}
-                                                    title={disabledAll ? "Form dalam mode baca" : "Klik untuk pilih foto"}
+                                                    title={isLoading ? "Sedang menyimpan..." : "Klik untuk pilih foto"}
                                                 >
                                                     {previewUrl ? (
                                                         <img
@@ -388,7 +347,7 @@ const Biodata = () => {
                                                         setPreviewUrl(url);
                                                     }
                                                     }}
-                                                    disabled={disabledAll}
+                                                    disabled={isLoading}
                                                     className="hidden"
                                                 />
                                             </div>
@@ -414,7 +373,7 @@ const Biodata = () => {
                                                 inputMode="numeric"
                                                 maxLength={16}
                                                 {...field}
-                                                disabled
+                                                // disabled
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -434,7 +393,7 @@ const Biodata = () => {
                                             <Input
                                                 placeholder="Nama lengkap sesuai KTP"
                                                 {...field}
-                                                disabled
+                                                // disabled
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -461,7 +420,7 @@ const Biodata = () => {
                                                     <Popover
                                                     open={dobOpen}
                                                     onOpenChange={(o) => {
-                                                        if (!disabledAll) setDobOpen(o);
+                                                        if (!isLoading) setDobOpen(o);
                                                     }}
                                                     >
                                                         <PopoverTrigger asChild>
@@ -469,7 +428,7 @@ const Biodata = () => {
                                                                 type="button"
                                                                 id="dateOfBirth"
                                                                 variant="outline"
-                                                                disabled={disabledAll}
+                                                                disabled={isLoading}
                                                                 className="w-full justify-between border-gray-200 font-normal"
                                                             >
                                                                 {selectedDate
@@ -519,7 +478,7 @@ const Biodata = () => {
                                             <Select
                                                 onValueChange={field.onChange}
                                                 value={field.value}
-                                                disabled={disabledAll}
+                                                disabled={isLoading}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors cursor-pointer">
@@ -553,7 +512,7 @@ const Biodata = () => {
                                                 placeholder="Contoh: 08123456789"
                                                 className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                 {...field}
-                                                disabled={disabledAll}
+                                                disabled={isLoading}
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -583,8 +542,8 @@ const Biodata = () => {
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Provinsi</FormLabel>
                                                 <Select
-                                                    disabled={disabledAll || provinces.length === 0}
-                                                    value={provincesPrev || field.value}
+                                                    disabled={isLoading || provinces.length === 0}
+                                                    value={field.value}
                                                     onValueChange={(val) => {
                                                         field.onChange(val);
                                                         const found = provinces.find(p => p.name === val);
@@ -624,40 +583,36 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kota/Kabupaten</FormLabel>
-                                                {regenciesPrev ? (
-                                                    <Input value={regenciesPrev} readOnly disabled />
-                                                ) : (
-                                                    <Select
-                                                        disabled={disabledAll || regencies.length === 0}
-                                                        value={field.value}
-                                                        onValueChange={(val) => {
-                                                            field.onChange(val);
-                                                            const found = regencies.find(r => r.name === val);
-                                                            const id = found?.id ?? null;
-                                                            setRegId(id);
-                                                            setDistricts([]); setVillages([]);
-                                                            setDistId(null);
-                                                            form.setValue("subDistrict", "");
-                                                            form.setValue("ward", "");
-                                                        }}
-                                                    >
-                                                        <FormControl>
-                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                                <SelectValue placeholder="Pilih kota/kabupaten" />
-                                                            </SelectTrigger>
-                                                        </FormControl>
-                                                        <SelectContent>
-                                                            <EachUtils 
-                                                                of={regencies}
-                                                                render={(item, index) => (
-                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                        {item.name}
-                                                                    </SelectItem>
-                                                                )}
-                                                            />
-                                                        </SelectContent>
-                                                    </Select>
-                                                )}
+                                                <Select
+                                                    disabled={isLoading || regencies.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        const found = regencies.find(r => r.name === val);
+                                                        const id = found?.id ?? null;
+                                                        setRegId(id);
+                                                        setDistricts([]); setVillages([]);
+                                                        setDistId(null);
+                                                        form.setValue("subDistrict", "");
+                                                        form.setValue("ward", "");
+                                                    }}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kota/kabupaten" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={regencies}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -669,38 +624,34 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kecamatan</FormLabel>
-                                                {districtsPrev ? (
-                                                    <Input value={districtsPrev} readOnly disabled />
-                                                ) : (
-                                                    <Select
-                                                        disabled={disabledAll || districts.length === 0}
-                                                        value={field.value}
-                                                        onValueChange={(val) => {
-                                                            field.onChange(val);
-                                                            const found = districts.find(d => d.name === val);
-                                                            const id = found?.id ?? null;
-                                                            setDistId(id);
-                                                            setVillages([]);
-                                                            form.setValue("ward", "");
-                                                        }}
-                                                    >
-                                                        <FormControl>
-                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                                <SelectValue placeholder="Pilih kecamatan" />
-                                                            </SelectTrigger>
-                                                        </FormControl>
-                                                        <SelectContent>
-                                                            <EachUtils 
-                                                                of={districts}
-                                                                render={(item, index) => (
-                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                        {item.name}
-                                                                    </SelectItem>
-                                                                )}
-                                                            />
-                                                        </SelectContent>
-                                                    </Select>
-                                                )}
+                                                <Select
+                                                    disabled={isLoading || districts.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        const found = districts.find(d => d.name === val);
+                                                        const id = found?.id ?? null;
+                                                        setDistId(id);
+                                                        setVillages([]);
+                                                        form.setValue("ward", "");
+                                                    }}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kecamatan" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={districts}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -712,31 +663,27 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-medium text-gray-700">Kelurahan/Desa</FormLabel>
-                                                {villagesPrev ? (
-                                                    <Input value={villagesPrev} readOnly disabled />
-                                                ) : (
-                                                    <Select
-                                                        disabled={disabledAll || villages.length === 0}
-                                                        value={villagesPrev || field.value}
-                                                        onValueChange={(val) => field.onChange(val)}
-                                                    >
-                                                        <FormControl>
-                                                            <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                                                                <SelectValue placeholder="Pilih kelurahan/desa" />
-                                                            </SelectTrigger>
-                                                        </FormControl>
-                                                        <SelectContent>
-                                                            <EachUtils 
-                                                                of={villages}
-                                                                render={(item, index) => (
-                                                                    <SelectItem key={index} value={item.name} className="cursor-pointer">
-                                                                        {item.name}
-                                                                    </SelectItem>
-                                                                )}
-                                                            />
-                                                        </SelectContent>
-                                                    </Select>
-                                                )}
+                                                <Select
+                                                    disabled={isLoading || villages.length === 0}
+                                                    value={field.value}
+                                                    onValueChange={(val) => field.onChange(val)}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                            <SelectValue placeholder="Pilih kelurahan/desa" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <EachUtils 
+                                                            of={villages}
+                                                            render={(item, index) => (
+                                                                <SelectItem key={index} value={item.name} className="cursor-pointer">
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            )}
+                                                        />
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -753,7 +700,7 @@ const Biodata = () => {
                                                         placeholder="Masukkan kode pos"
                                                         className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                         {...field}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -772,7 +719,7 @@ const Biodata = () => {
                                                         placeholder="Masukkan alamat lengkap (nama jalan, RT/RW, nomor rumah, dsb.)"
                                                         className="min-h-[100px] border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none transition-colors"
                                                         {...field}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -813,7 +760,7 @@ const Biodata = () => {
                                                         {...field}
                                                         value={field.value ?? ""}
                                                         onChange={(e) => field.onChange(e.target.value)}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -834,7 +781,7 @@ const Biodata = () => {
                                                 placeholder="Contoh: IR64, Ciherang"
                                                 className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                 {...field}
-                                                disabled={disabledAll}
+                                                disabled={isLoading}
                                             />
                                             </FormControl>
                                             <FormMessage />
@@ -860,7 +807,7 @@ const Biodata = () => {
                                                         {...field}
                                                         value={field.value ?? ""}
                                                         onChange={(e) => field.onChange(e.target.value)}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -885,7 +832,7 @@ const Biodata = () => {
                                                             className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                             value={field.value ?? ""}
                                                             onChange={(e) => field.onChange(e.target.value)}
-                                                            disabled={disabledAll}
+                                                            disabled={isLoading}
                                                         />
                                                         <span className="text-gray-700 text-sm">tahun</span>
                                                     </div>
@@ -906,7 +853,7 @@ const Biodata = () => {
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     value={field.value}
-                                                    disabled={disabledAll}
+                                                    disabled={isLoading}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors">
@@ -946,7 +893,7 @@ const Biodata = () => {
                                                     placeholder="Masukkan lokasi lahan"
                                                     className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                     {...field}
-                                                    disabled={disabledAll}
+                                                    disabled={isLoading}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -965,7 +912,7 @@ const Biodata = () => {
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     value={field.value}
-                                                    disabled={disabledAll}
+                                                    disabled={isLoading}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors">
@@ -1002,7 +949,7 @@ const Biodata = () => {
                                                         placeholder="Masukkan nama kelompok tani"
                                                         className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                         {...field}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -1023,7 +970,7 @@ const Biodata = () => {
                                                         placeholder="Masukkan nomor kartu tani"
                                                         className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                         {...field}
-                                                        disabled={disabledAll}
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -1036,15 +983,7 @@ const Biodata = () => {
 
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
                             <div className="flex flex-col sm:flex-row gap-4">
-                                {isReadOnly ? (
-                                    <Button
-                                        type="button"
-                                        className="w-full h-12 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-200"
-                                        disabled
-                                    >
-                                        Biodata sudah tersimpan • Mode baca
-                                    </Button>
-                                ) : isLoading ? (
+                                {isLoading ? (
                                     <Button className="w-full h-12 rounded-md bg-blue-600 hover:bg-blue-700" disabled>
                                         <Loader2 className="animate-spin mr-2" size={18} />
                                         Sedang menyimpan data...

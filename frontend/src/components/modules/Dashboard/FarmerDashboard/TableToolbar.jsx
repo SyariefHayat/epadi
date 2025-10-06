@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 
 import {
     Select, 
@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const TableToolbar = ({ 
     searchQuery,
@@ -29,14 +31,25 @@ const TableToolbar = ({
 }) => {
     return (
         <div className="flex flex-col gap-4">
-            <div className="relative w-full">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                    placeholder="Cari pengguna berdasarkan NIK atau nama..."
-                    className="pl-9 w-full"
-                    value={searchQuery}
-                    onChange={onSearchChange}
-                />
+            <div className="flex gap-3">
+                <div className="relative w-full">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Cari pengguna berdasarkan NIK atau nama..."
+                        className="pl-9 w-full"
+                        value={searchQuery}
+                        onChange={onSearchChange}
+                    />
+                </div>
+
+                <a href="/admin/petani/create">
+                    <Button 
+                        className="h-8.5 flex items-center gap-2 cursor-pointer" 
+                    >
+                        <Plus size={16} />
+                        Tambah Data
+                    </Button>
+                </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
