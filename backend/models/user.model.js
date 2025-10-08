@@ -1,34 +1,37 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-    uid: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    uid: { type: String, required: true, unique: true, index: true },
+    phone: { type: String, trim: true, match: /^[0-9]{10,15}$/, index: true },
     fullName: { type: String, required: true, unique: true, trim: true },
-    role: { 
-        type: String, 
-        enum: ["farmer", "buyer", "distributor", "investor", "admin"], 
-        default: "farmer" 
+
+    role: {
+        type: String,
+        enum: ["farmer", "buyer", "distributor", "investor", "operator", "admin"],
+        default: "farmer",
+        index: true
     },
-    NIK: {
+
+    email: {
         type: String, 
-        required: true, 
-        unique: true, 
         trim: true, 
-        minlength: 16, 
-        maxlength: 16, 
-        match: /^[0-9]{16}$/ 
+        required: function() {
+            return this.role === "operator" || this.role === "admin"
+        },
+        index: true
     },
-});
 
-UserSchema.virtual("farmerDetail", {
-    ref: "Farmer",
-    localField: "_id",
-    foreignField: "user",
-    justOne: true,
-});
+    profilePicture: { type: String, default: "" },
+    isActive: { type: Boolean, default: true },
+}, { timeStamps: true, versionKey: false });
 
-UserSchema.set("toObject", { virtuals: true });
-UserSchema.set("toJSON", { virtuals: true });
+UserSchema.pre("validate", function(next) {
+    if (!this.email && !this.phone) {
+        this.invalidate("email", "Either email or phone is required");
+        this.invalidate("phone", "Either email or phone is required");
+    }
+    next();
+});
 
 module.exports = {
     User: mongoose.model("User", UserSchema),

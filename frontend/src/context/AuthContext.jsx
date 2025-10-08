@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     const [userData, setUserData] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
 
-    // Fungsi untuk fetch user data dari API
     const fetchUserData = async (user) => {
         try {
             const userSignIn = await apiInstanceExpress.post("sign-in", {
@@ -37,7 +36,6 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error("Error fetching user data:", error);
-            // Jika gagal fetch dari API, gunakan data dari Firebase
             const fallbackUserData = {
                 uid: user.uid,
                 email: user.email,
@@ -59,7 +57,6 @@ export const AuthProvider = ({ children }) => {
                     if (user) {
                         setCurrentUser(user);
                         
-                        // Set data user sementara dari Firebase terlebih dahulu
                         const tempUserData = {
                             uid: user.uid,
                             email: user.email,
@@ -69,7 +66,6 @@ export const AuthProvider = ({ children }) => {
                         };
                         setUserData(tempUserData);
                         
-                        // Kemudian fetch data lengkap dari API
                         await fetchUserData(user);
                     } else {
                         setCurrentUser(null);
@@ -95,7 +91,6 @@ export const AuthProvider = ({ children }) => {
         };
     }, []);
 
-    // Fungsi untuk refresh user data
     const refreshUserData = async () => {
         if (currentUser) {
             setLoading(true);

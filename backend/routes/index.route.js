@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const upload = require("../middlewares/upload");
+
 const verifyToken = require("../middlewares/verifyToken");
+const verifyLocation = require("../middlewares/verifyLocation");
 
 const authController = require("../controllers/auth.controller");
 const biodataController = require("../controllers/biodata.controller");
@@ -11,7 +13,7 @@ router.get("/", (req, res) => {
     res.send("Server is running!");
 })
 
-router.post("/sign-up", authController.SignUpUser);
+router.post("/sign-up", verifyLocation, authController.SignUpUser);
 router.post("/sign-in", authController.SignInUser);
 router.post("/sign-out", verifyToken, authController.SignOutUser);
 

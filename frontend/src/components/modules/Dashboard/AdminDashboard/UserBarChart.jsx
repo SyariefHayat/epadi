@@ -74,7 +74,7 @@ const UserBarChart = ({ growthData }) => {
     const isEmpty = processedData.every(item => item.growth === 0);
 
     return (
-        <Card className="sm:col-span-1">
+        <Card className="sm:col-span-3">
             <CardHeader>
                 <CardTitle>Pertumbuhan Pengguna</CardTitle>
                 <CardDescription>

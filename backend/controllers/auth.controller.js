@@ -1,32 +1,46 @@
 require("dotenv").config();
 
+const { Farmer } = require("../models/farmer.model");
 const { User } = require("../models/user.model");
 const { SUC, ERR } = require("../utils/response");
 
 const SignUpUser = async (req, res) => {
-    const { uid, email, fullName, role, NIK } = req.body;
-
     try {
-        if (!uid || !email || !fullName || !role || !NIK) return ERR(res, 400, "uid, email, fullName, role, dan NIK wajib diisi");
+        const { uid, email, fullName, role, NIK, province, regency, district, village, isActive } = req.body;
 
-        const existingUser = await User.findOne({ 
-            $or: [
-                { NIK },
-                { fullName }
-            ]
-        });
+        if (!uid || !email || !fullName || !role)
+        return ERR(res, 400, "uid, email, fullName, dan role wajib diisi");
 
-        if (existingUser) return ERR(res, 409, "NIK atau nama lengkap sudah terdaftar");
+        const existingUser = await User.findOne({ $or: [{ uid }, { email }] });
+        if (existingUser) return ERR(res, 409, "User sudah terdaftar");
+
+        if (role === "farmer") {
+            if (!NIK) return ERR(res, 400, "NIK wajib diisi untuk farmer");
+
+            const existingFarmer = await Farmer.findOne({ NIK });
+            if (existingFarmer) return ERR(res, 409, "NIK sudah terdaftar");
+        };
 
         const user = await User.create({
             uid,
             email,
             fullName,
             role,
-            NIK,
+            isActive: isActive ?? true,
         });
 
-        return SUC(res, 201, user, "User created successfully");
+        if (role === "farmer") {
+            await Farmer.create({
+                userId: user._id,
+                NIK,
+                provinceCode: province,
+                cityCode: regency,
+                subDistrictCode: district,
+                ward: village,
+            });
+        };
+
+        return SUC(res, 201, user,"User created successfully");
     } catch (error) {
         console.error(error);
         return ERR(res, 500, "Signup failed");
@@ -35,6 +49,7 @@ const SignUpUser = async (req, res) => {
 
 const SignInUser = async (req, res) => {
     const { uid, email } = req.body;
+    console.log(req.body)
 
     try {
         if (!uid || !email) return ERR(res, 400, "uid dan email wajib diisi");
