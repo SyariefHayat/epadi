@@ -19,10 +19,14 @@ const FarmerSchema = new mongoose.Schema({
     phone: { type: String, trim: true, match: /^[0-9]{10,15}$/, default: "" },
 
     provinceCode: { type: String, trim: true, index: true },
+    province: { type: String, trim: true, index: true },
     postalCode: { type: String, trim: true, index: true },
     cityCode: { type: String, trim: true },
+    city: { type: String, trim: true },
     subDistrictCode: { type: String, trim: true },
+    subDistrict: { type: String, trim: true },
     ward: { type: String, trim: true },
+    wardCode: { type: String, trim: true },
     address: { type: String, trim: true },
 
     landArea: { type: Number, min: 0 },

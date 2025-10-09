@@ -1,6 +1,6 @@
 const { SUC, ERR } = require("../utils/response");
 const { User } = require("../models/user.model");
-const Farmer = require("../models/farmer.model");
+const { Farmer } = require("../models/farmer.model");
 
 // const FarmerBiodata = async (req, res) => {
 //     const profileImgFile = req.file;
@@ -189,8 +189,6 @@ const getDashboardSummary = async (req, res) => {
             User.find({ role: "buyer" }),
         ]);
 
-        console.log(farmers)
-
         return SUC(res, 200, { 
             farmers, 
             distributors, 
@@ -209,13 +207,14 @@ const getAllFarmers = async (req, res) => {
         const limit = parseInt(req.query.limit) || 6;
         const skip = (page - 1) * limit;
 
-        const totalFarmers = await User.countDocuments({ role: "farmer" });
+        const totalFarmers = await Farmer.countDocuments();
 
-        const farmers = await User.find({ role: "farmer" })
+        const farmers = await Farmer.find()
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
-            .populate("farmerDetail");
+            .populate("userId", "fullName email phone role")
+            .lean();
 
         return SUC(res, 200, {
             data: farmers,

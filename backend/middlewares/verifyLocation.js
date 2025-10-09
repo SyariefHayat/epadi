@@ -3,15 +3,15 @@ const { ERR } = require("../utils/response");
 
 const verifyLocation = async (req, res, next) => {
     try {
-        const { province, regency, district, village } = req.body;
+        const { provinceCode, cityCode, subDistrictCode, wardCode } = req.body;
 
-        if (!province && !regency && !district && !village) return ERR(res, 400, "Data wilayah tidak lengkap");
+        if (!provinceCode && !cityCode && !subDistrictCode && !wardCode) return ERR(res, 400, "Data wilayah tidak lengkap");
 
         const regionLevels = [
-            { code: village, level: "village" },
-            { code: district, level: "district" },
-            { code: regency, level: "regency" },
-            { code: province, level: "province" },
+            { code: wardCode, level: "village" },
+            { code: subDistrictCode, level: "district" },
+            { code: cityCode, level: "regency" },
+            { code: provinceCode, level: "province" },
         ].filter(r => !!r.code);
 
         let allowed = null;

@@ -105,7 +105,6 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
                 };
 
                 onEdit(updatedData);
-                console.log(updatedData)
             };
 
         } catch (error) {
@@ -124,11 +123,11 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
     return (
         <>
             <TableRow>
-                <TableCell className="font-medium">{farmer?.fullName || '-'}</TableCell>
+                <TableCell className="font-medium">{farmer?.userId?.fullName || '-'}</TableCell>
                 <TableCell>{farmer?.NIK || '-'}</TableCell>
                 <TableCell>
                     <Badge variant="outline" className="capitalize">
-                        {farmer?.role || 'N/A'}
+                        {farmer?.userId?.role || 'N/A'}
                     </Badge>
                 </TableCell>
                 <TableCell>
@@ -143,10 +142,10 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
                         <span className="text-muted-foreground">-</span>
                     )}
                 </TableCell>
-                <TableCell>{province}</TableCell>
-                <TableCell>{city}</TableCell>
-                <TableCell>{subDistrict}</TableCell>
-                <TableCell>{ward}</TableCell>
+                <TableCell>{farmer.province}</TableCell>
+                <TableCell>{farmer.city}</TableCell>
+                <TableCell>{farmer.subDistrict}</TableCell>
+                <TableCell>{farmer.ward}</TableCell>
                 <TableCell>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

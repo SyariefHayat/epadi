@@ -172,6 +172,24 @@ export const useFarmer = () => {
                 });
                 
                 if (response.status === 200) {
+                    const farmers = response.data.data.data || [];
+                    
+                    const mappedFarmers = farmers.map(farmer => {
+                        const province = provinces.find(p => p.code === farmer.provinceCode);
+                        const city = cities.find(c => c.code === farmer.cityCode);
+                        const subDistrict = subDistricts.find(s => s.code === farmer.subDistrictCode);
+                        const ward = wards.find(w => w.code === farmer.ward);
+                        return {
+                            ...farmer,
+                            provinceName: province ? province.name : '-',
+                            cityName: city ? city.name : '-',
+                            subDistrictName: subDistrict ? subDistrict.name : '-',
+                            wardName: ward ? ward.name : '-',
+                        };
+                    });
+
+                    console.log(mappedFarmers)
+
                     setAllFarmers(response.data.data.data || []);
                     setPagination(response.data.data.pagination);
                 }

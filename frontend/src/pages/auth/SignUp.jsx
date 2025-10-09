@@ -64,6 +64,13 @@ const SignUp = () => {
     const [districts, setDistricts] = useState([]);
     const [villages, setVillages] = useState([]);
 
+    const [locationNames, setLocationNames] = useState({
+        provinceName: "",
+        regencyName: "",
+        districtName: "",
+        villageName: ""
+    });
+
     const roleData = LIST_ROLE.find((item) => item.id === role);
 
     useEffect(() => {
@@ -107,7 +114,7 @@ const SignUp = () => {
             .then(res => res.json())
             .then(setDistricts)
             .catch(() => toast.error("Gagal memuat daftar kecamatan"));
-    }, [form.watch("regency")]);
+    }, [form.watch("regency"), regencies]);
 
     useEffect(() => {
         const distId = form.watch("district");
@@ -138,10 +145,16 @@ const SignUp = () => {
                 fullName: user.displayName,
                 role,
                 NIK: data.NIK,
-                province: data.province,
-                regency: data.regency,
-                district: data.district,
-                village: data.village,
+
+                provinceCode: data.province,
+                cityCode: data.regency,
+                subDistrictCode: data.district,
+                wardCode: data.village,
+
+                province: locationNames.provinceName,
+                city: locationNames.regencyName,
+                subDistrict: locationNames.districtName,
+                ward: locationNames.villageName,
                 isActive: true,
             });
 
@@ -227,7 +240,16 @@ const SignUp = () => {
                                             <FormItem className="w-full">
                                                 <FormLabel>Provinsi</FormLabel>
                                                 <Select 
-                                                    onValueChange={field.onChange} 
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value);
+                                                        const selected = provinces.find(p => p.id === value);
+                                                        if (selected) {
+                                                            setLocationNames(prev => ({
+                                                                ...prev,
+                                                                provinceName: selected.name
+                                                            }));
+                                                        }
+                                                    }} 
                                                     value={field.value}
                                                 >
                                                     <SelectTrigger className="w-full">
@@ -237,7 +259,9 @@ const SignUp = () => {
                                                         <EachUtils 
                                                             of={provinces}
                                                             render={(item, index) => (
-                                                                <SelectItem key={index} value={item.id}>{item.name}</SelectItem>
+                                                                <SelectItem key={index} value={item.id}>
+                                                                    {item.name}
+                                                                </SelectItem>
                                                             )}
                                                         />
                                                     </SelectContent>
@@ -254,7 +278,16 @@ const SignUp = () => {
                                             <FormItem className="w-full">
                                                 <FormLabel>Kota / Kabupaten</FormLabel>
                                                 <Select 
-                                                    onValueChange={field.onChange} 
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value);
+                                                        const selected = regencies.find(r => r.id === value);
+                                                        if (selected) {
+                                                            setLocationNames(prev => ({
+                                                                ...prev,
+                                                                regencyName: selected.name
+                                                            }));
+                                                        }
+                                                    }} 
                                                     value={field.value} 
                                                     disabled={!regencies.length}
                                                 >
@@ -286,7 +319,16 @@ const SignUp = () => {
                                             <FormItem className="w-full">
                                                 <FormLabel>Kecamatan</FormLabel>
                                                 <Select 
-                                                    onValueChange={field.onChange} 
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value);
+                                                        const selected = districts.find(d => d.id === value);
+                                                        if (selected) {
+                                                            setLocationNames(prev => ({
+                                                                ...prev,
+                                                                districtName: selected.name
+                                                            }));
+                                                        }
+                                                    }} 
                                                     value={field.value} 
                                                     disabled={!districts.length}
                                                 >
@@ -297,7 +339,9 @@ const SignUp = () => {
                                                         <EachUtils 
                                                             of={districts}
                                                             render={(item, index) => (
-                                                                <SelectItem key={index} value={item.id}>{item.name}</SelectItem>
+                                                                <SelectItem key={index} value={item.id}>
+                                                                    {item.name}
+                                                                </SelectItem>
                                                             )}
                                                         />
                                                     </SelectContent>
@@ -314,7 +358,16 @@ const SignUp = () => {
                                             <FormItem className="w-full">
                                                 <FormLabel>Desa</FormLabel>
                                                 <Select 
-                                                    onValueChange={field.onChange} 
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value);
+                                                        const selected = villages.find(v => v.id === value);
+                                                        if (selected) {
+                                                            setLocationNames(prev => ({
+                                                                ...prev,
+                                                                villageName: selected.name
+                                                            }));
+                                                        }
+                                                    }} 
                                                     value={field.value} 
                                                     disabled={!villages.length}
                                                 >

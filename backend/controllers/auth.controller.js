@@ -6,7 +6,22 @@ const { SUC, ERR } = require("../utils/response");
 
 const SignUpUser = async (req, res) => {
     try {
-        const { uid, email, fullName, role, NIK, province, regency, district, village, isActive } = req.body;
+        const { 
+            uid, 
+            email, 
+            fullName, 
+            role, 
+            NIK, 
+            provinceCode,
+            province,
+            cityCode, 
+            city, 
+            subDistrictCode,
+            subDistrict,
+            wardCode,
+            ward,
+            isActive 
+        } = req.body;
 
         if (!uid || !email || !fullName || !role)
         return ERR(res, 400, "uid, email, fullName, dan role wajib diisi");
@@ -33,10 +48,14 @@ const SignUpUser = async (req, res) => {
             await Farmer.create({
                 userId: user._id,
                 NIK,
-                provinceCode: province,
-                cityCode: regency,
-                subDistrictCode: district,
-                ward: village,
+                provinceCode,
+                province,
+                cityCode,
+                city,
+                subDistrictCode,
+                subDistrict,
+                wardCode,
+                ward,
             });
         };
 
