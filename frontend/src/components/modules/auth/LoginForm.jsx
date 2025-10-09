@@ -22,10 +22,7 @@ import { Button } from "@/components/ui/button"
 import { apiInstanceExpress } from "@/services/apiInstance"
 
 const userSigninSchema = z.object({
-    fullName: z
-        .string()
-        .min(3, { message: "Nama lengkap minimal 3 karakter" })
-        .regex(/^[a-zA-Z\s]+$/, { message: "Nama hanya boleh berisi huruf dan spasi" }),
+    fullName: z.string().min(1, { message: "Nama lengkap harus diisi" }),
     password: z
         .string()
         .min(8, { message: "Password minimal 8 karakter" })
