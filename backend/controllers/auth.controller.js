@@ -49,7 +49,6 @@ const SignUpUser = async (req, res) => {
 
 const SignInUser = async (req, res) => {
     const { uid, email } = req.body;
-    console.log(req.body)
 
     try {
         if (!uid || !email) return ERR(res, 400, "uid dan email wajib diisi");

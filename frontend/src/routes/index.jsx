@@ -76,6 +76,11 @@ const routes = [
         element: <SignUp />,
         errorElement: <ErrorBoundary />
     },
+    {
+        path: "/signup/epadi/admin",
+        element: <SignUp />,
+        errorElement: <ErrorBoundary />
+    },
     { 
         path: "/signin", 
         element: <SignIn />,

@@ -5,6 +5,8 @@ const verifyLocation = async (req, res, next) => {
     try {
         const { province, regency, district, village } = req.body;
 
+        if (!province && !regency && !district && !village) return ERR(res, 400, "Data wilayah tidak lengkap");
+
         const regionLevels = [
             { code: village, level: "village" },
             { code: district, level: "district" },
@@ -24,14 +26,15 @@ const verifyLocation = async (req, res, next) => {
         }
 
         if (!allowed) {
-            return ERR(res, 403, "Wilayah kamu belum dibuka untuk akses sistem");
-        }
+            return ERR(res, 403, "Wilayah kamu belum dibuka untuk akses sistem")
+        };
 
         req.allowedRegion = allowed;
+
         next();
 
     } catch (error) {
-        console.error(error);
+        console.error("Error verifying location:", error);
         return ERR(res, 500, "Gagal memverifikasi wilayah");
     }
 };

@@ -132,7 +132,7 @@ const SignUp = () => {
             const user = register.user;
             await updateProfile(user, { displayName: data.fullName });
 
-            await apiInstanceExpress.post("/sign-up", {
+            const response = await apiInstanceExpress.post("/sign-up", {
                 uid: user.uid,
                 email: user.email,
                 fullName: user.displayName,
@@ -145,18 +145,28 @@ const SignUp = () => {
                 isActive: true,
             });
 
-            toast.success("Pendaftaran berhasil!");
-            await auth.signOut();
+            if (response.status === 201) {
+                toast.success("Pendaftaran berhasil!");
+                await auth.signOut();
+                
+                setTimeout(() => {
+                    navigate("/signin");
+                }, 1000);
+            }
 
-            setTimeout(() => {
-                navigate("/signin");
-            }, 1500)
         } catch (error) {
+            if (auth.currentUser) await auth.currentUser.delete();
+
             let msg = "Pendaftaran gagal.";
 
             if (error.code === "auth/email-already-in-use") msg = "Email sudah digunakan.";
             else if (error.code === "auth/invalid-email") msg = "Email tidak valid.";
             else if (error.code === "auth/weak-password") msg = "Password terlalu lemah.";
+
+            if (error.response && error.response.status === 403) {
+                msg = error.response.data.message || "Wilayah kamu belum dibuka untuk akses sistem";
+            }
+
             toast.error(msg);
         } finally {
             setIsLoading(false);

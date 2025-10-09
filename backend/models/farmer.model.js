@@ -11,7 +11,8 @@ const FarmerSchema = new mongoose.Schema({
         trim: true,
         minlength: 16,
         maxlength: 16,
-        match: /^[0-9]{16}$/
+        match: /^[0-9]{16}$/,
+        sparse: true,
     },
     dateOfBirth: { type: Date },
     gender: { type: String, enum: ["Laki-laki", "Perempuan"] },
