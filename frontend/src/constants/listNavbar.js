@@ -64,21 +64,21 @@ export const LIST_NAVBAR_ADMIN_DB = [
                 url: "/admin/users/petani",
                 icon: User,
             },
-            {
-                title: "Distributor",
-                url: "/admin/users/distributor",
-                icon: HandCoins,
-            },
-            {
-                title: "Investor",
-                url: "/admin/users/investor",
-                icon: Wallet,
-            },
-            {
-                title: "Pembeli",
-                url: "/admin/users/pembeli",
-                icon: ClipboardList,
-            },
+            // {
+            //     title: "Distributor",
+            //     url: "/admin/users/distributor",
+            //     icon: HandCoins,
+            // },
+            // {
+            //     title: "Investor",
+            //     url: "/admin/users/investor",
+            //     icon: Wallet,
+            // },
+            // {
+            //     title: "Pembeli",
+            //     url: "/admin/users/pembeli",
+            //     icon: ClipboardList,
+            // },
         ],
     },
     {
