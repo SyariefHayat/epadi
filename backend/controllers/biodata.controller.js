@@ -7,7 +7,8 @@ const FarmerBiodata = async (req, res) => {
     const profileImage = profileImgFile ? `${profileImgFile.filename}` : null;
 
     const {
-        user,
+        fullName,
+        NIK,
         dateOfBirth,
         gender,
         phone,
@@ -25,12 +26,14 @@ const FarmerBiodata = async (req, res) => {
         landLocation,
         plantingSeason,
         farmerGroup,
-        farmerCardNumber
+        farmerCardNumber,
+        createdBy
     } = req.body;
 
     try {
         const requiredFields = {
-            user,
+            fullName,
+            NIK,
             dateOfBirth,
             gender,
             postalCode,
@@ -46,7 +49,8 @@ const FarmerBiodata = async (req, res) => {
             landOwnership,
             landLocation,
             plantingSeason,
-            farmerGroup
+            farmerGroup,
+            createdBy
         };
 
         const emptyFields = Object.entries(requiredFields)
@@ -70,12 +74,10 @@ const FarmerBiodata = async (req, res) => {
         
         if (age < 17 || (age === 17 && monthDiff < 0)) return ERR(res, 400, "Umur minimal 17 tahun");
 
-        if (!user) return ERR(res, 401, "User tidak terautentikasi");
-
-        const existingUser = await User.findById(user);
+        const existingUser = await User.findById(createdBy);
         if (!existingUser) return ERR(res, 404, "User tidak ditemukan");
 
-        const existingFarmer = await Farmer.findOne({ user });
+        const existingFarmer = await Farmer.findOne({ NIK });
         if (existingFarmer) return ERR(res, 409, "Data biodata petani sudah ada untuk user ini");
 
         if (farmerCardNumber) {
@@ -91,7 +93,8 @@ const FarmerBiodata = async (req, res) => {
         if (existingPhone) return ERR(res, 409, "Nomor HP sudah digunakan");
 
         const farmerData = {
-            user,
+            fullName,
+            NIK,
             profilePicture: profileImage,
             dateOfBirth: birthDate,
             gender: gender.trim(),
@@ -116,8 +119,6 @@ const FarmerBiodata = async (req, res) => {
 
         const newFarmer = new Farmer(farmerData);
         await newFarmer.save();
-
-        await newFarmer.populate('user', 'fullName email');
 
         return SUC(res, 201, "Biodata petani berhasil disimpan", newFarmer);
     } catch (error) {

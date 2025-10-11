@@ -34,17 +34,8 @@ import {
     DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import EachUtils from '@/utils/EachUtils';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -55,18 +46,14 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
         fullName: farmer?.fullName || '',
         NIK: farmer?.NIK || '',
         role: farmer?.role || '',
-        province: farmer?.farmerDetail?.province || '',
-        city: farmer?.farmerDetail?.city || '',
-        subDistrict: farmer?.farmerDetail?.subDistrict || '',
-        ward: farmer?.farmerDetail?.ward || '',
+        province: farmer?.province || '-',
+        city: farmer?.city || '-',
+        subDistrict: farmer?.subDistrict || '-',
+        ward: farmer?.ward || '-',
+        lands: farmer?.landArea || '-',
     });
 
-    const farmerDetail = farmer?.farmerDetail || {};
-    const lands = farmerDetail?.lands || [];
-    const province = farmerDetail?.province || '-';
-    const city = farmerDetail?.city || '-';
-    const subDistrict = farmerDetail?.subDistrict || '-';
-    const ward = farmerDetail?.ward || '-';
+    const lands = farmer?.landArea || [];
 
     const handleEditClick = () => {
         setIsEditOpen(true);
@@ -123,7 +110,7 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
     return (
         <>
             <TableRow>
-                <TableCell className="font-medium">{farmer?.userId?.fullName || '-'}</TableCell>
+                <TableCell className="font-medium">{farmer?.fullName || '-'}</TableCell>
                 <TableCell>{farmer?.NIK || '-'}</TableCell>
                 <TableCell>
                     <Badge variant="outline" className="capitalize">
@@ -131,16 +118,7 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
                     </Badge>
                 </TableCell>
                 <TableCell>
-                    {lands.length > 0 ? (
-                        <EachUtils 
-                            of={lands}
-                            render={(item, index) => (
-                                <p key={index}>{item?.landArea || '-'} m²</p>
-                            )}
-                        />
-                    ) : (
-                        <span className="text-muted-foreground">-</span>
-                    )}
+                    {farmer?.landArea || '-'} m²
                 </TableCell>
                 <TableCell>{farmer.province}</TableCell>
                 <TableCell>{farmer.city}</TableCell>

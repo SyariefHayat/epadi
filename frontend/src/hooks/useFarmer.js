@@ -155,7 +155,6 @@ export const useFarmer = () => {
                     limit: '10'
                 });
 
-                // Tambahkan search query jika ada
                 if (searchQuery.trim()) {
                     params.append('search', searchQuery.trim());
                 }
@@ -187,8 +186,6 @@ export const useFarmer = () => {
                             wardName: ward ? ward.name : '-',
                         };
                     });
-
-                    console.log(mappedFarmers)
 
                     setAllFarmers(response.data.data.data || []);
                     setPagination(response.data.data.pagination);
