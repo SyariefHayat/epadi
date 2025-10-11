@@ -183,7 +183,7 @@ const getFarmerBiodata = async (req, res) => {
 const getDashboardSummary = async (req, res) => {
     try {
         const [farmers, distributors, investors, buyers] = await Promise.all([
-            User.find({ role: "farmer" }),
+            Farmer.find().lean(),
             User.find({ role: "distributor" }),
             User.find({ role: "investor" }),
             User.find({ role: "buyer" }),
