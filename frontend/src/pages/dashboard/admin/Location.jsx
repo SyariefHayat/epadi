@@ -7,7 +7,8 @@ import {
     Trash2, 
     MapPin, 
     Users, 
-    RefreshCw 
+    RefreshCw,
+    Download
 } from 'lucide-react'
 
 import {
@@ -58,7 +59,7 @@ const Location = () => {
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-    const [modalMode, setModalMode] = useState('add') // 'add' or 'edit'
+    const [modalMode, setModalMode] = useState('add')
     const [locationToDelete, setLocationToDelete] = useState(null)
     const [stats, setStats] = useState({
         total: 0,
@@ -76,10 +77,48 @@ const Location = () => {
     
     const [editingId, setEditingId] = useState(null)
 
+    // Emsifa API States
+    const [provinsiList, setProvinsiList] = useState([])
+    const [kabupatenList, setKabupatenList] = useState([])
+    const [kecamatanList, setKecamatanList] = useState([])
+    const [desaList, setDesaList] = useState([])
+    const [loadingEmsifa, setLoadingEmsifa] = useState(false)
+    const [selectedProvinsi, setSelectedProvinsi] = useState('')
+    const [selectedKabupaten, setSelectedKabupaten] = useState('')
+    const [selectedKecamatan, setSelectedKecamatan] = useState('')
+
     // Fetch locations on component mount
     useEffect(() => {
         fetchLocations()
     }, [])
+
+    // Fetch Provinsi dari Emsifa saat modal dibuka
+    useEffect(() => {
+        if (showModal && modalMode === 'add') {
+            fetchProvinsi()
+        }
+    }, [showModal, modalMode])
+
+    // Fetch Kabupaten ketika provinsi dipilih
+    useEffect(() => {
+        if (selectedProvinsi && ['kabupaten', 'kecamatan', 'desa'].includes(formData.level)) {
+            fetchKabupaten(selectedProvinsi)
+        }
+    }, [selectedProvinsi, formData.level])
+
+    // Fetch Kecamatan ketika kabupaten dipilih
+    useEffect(() => {
+        if (selectedKabupaten && ['kecamatan', 'desa'].includes(formData.level)) {
+            fetchKecamatan(selectedProvinsi, selectedKabupaten)
+        }
+    }, [selectedKabupaten, formData.level])
+
+    // Fetch Desa ketika kecamatan dipilih
+    useEffect(() => {
+        if (selectedKecamatan && formData.level === 'desa') {
+            fetchDesa(selectedProvinsi, selectedKabupaten, selectedKecamatan)
+        }
+    }, [selectedKecamatan, formData.level])
 
     // Fetch all locations
     const fetchLocations = async () => {
@@ -95,6 +134,66 @@ const Location = () => {
             alert('Gagal memuat data wilayah')
         } finally {
             setLoading(false)
+        }
+    }
+
+    // Fetch Provinsi dari Emsifa
+    const fetchProvinsi = async () => {
+        setLoadingEmsifa(true)
+        try {
+            const response = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+            const data = await response.json()
+            setProvinsiList(data)
+        } catch (error) {
+            console.error('Error fetching provinsi:', error)
+            alert('Gagal memuat data provinsi dari Emsifa')
+        } finally {
+            setLoadingEmsifa(false)
+        }
+    }
+
+    // Fetch Kabupaten dari Emsifa
+    const fetchKabupaten = async (provinsiId) => {
+        setLoadingEmsifa(true)
+        try {
+            const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinsiId}.json`)
+            const data = await response.json()
+            setKabupatenList(data)
+        } catch (error) {
+            console.error('Error fetching kabupaten:', error)
+            alert('Gagal memuat data kabupaten dari Emsifa')
+        } finally {
+            setLoadingEmsifa(false)
+        }
+    }
+
+    // Fetch Kecamatan dari Emsifa
+    const fetchKecamatan = async (provinsiId, kabupatenId) => {
+        setLoadingEmsifa(true)
+        try {
+            const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${kabupatenId}.json`)
+            const data = await response.json()
+            setKecamatanList(data)
+        } catch (error) {
+            console.error('Error fetching kecamatan:', error)
+            alert('Gagal memuat data kecamatan dari Emsifa')
+        } finally {
+            setLoadingEmsifa(false)
+        }
+    }
+
+    // Fetch Desa dari Emsifa
+    const fetchDesa = async (provinsiId, kabupatenId, kecamatanId) => {
+        setLoadingEmsifa(true)
+        try {
+            const response = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${kecamatanId}.json`)
+            const data = await response.json()
+            setDesaList(data)
+        } catch (error) {
+            console.error('Error fetching desa:', error)
+            alert('Gagal memuat data desa dari Emsifa')
+        } finally {
+            setLoadingEmsifa(false)
         }
     }
 
@@ -129,7 +228,47 @@ const Location = () => {
             isActive: true
         })
         setEditingId(null)
+        setSelectedProvinsi('')
+        setSelectedKabupaten('')
+        setSelectedKecamatan('')
+        setKabupatenList([])
+        setKecamatanList([])
+        setDesaList([])
         setShowModal(true)
+    }
+
+    // Handle level change
+    const handleLevelChange = (level) => {
+        setFormData({ 
+            ...formData, 
+            level,
+            regionCode: '',
+            regionName: ''
+        })
+        setSelectedProvinsi('')
+        setSelectedKabupaten('')
+        setSelectedKecamatan('')
+        setKabupatenList([])
+        setKecamatanList([])
+        setDesaList([])
+    }
+
+    // Handle wilayah selection dari Emsifa
+    const handleWilayahSelect = (item) => {
+        setFormData({
+            ...formData,
+            regionCode: item.id,
+            regionName: item.name
+        })
+
+        // Set selected untuk cascade
+        if (formData.level === 'provinsi') {
+            setSelectedProvinsi(item.id)
+        } else if (formData.level === 'kabupaten') {
+            setSelectedKabupaten(item.id)
+        } else if (formData.level === 'kecamatan') {
+            setSelectedKecamatan(item.id)
+        }
     }
 
     // Handle edit button click
@@ -153,7 +292,6 @@ const Location = () => {
 
     // Handle form submit
     const handleSubmit = async () => {
-        // Validation
         if (!formData.regionCode || !formData.regionName || !formData.level) {
             alert('Mohon lengkapi semua field')
             return
@@ -162,7 +300,6 @@ const Location = () => {
         setLoading(true)
         try {
             if (modalMode === 'add') {
-                // Create new location
                 const response = await apiInstanceExpress.post('/admin/create/allowedRegion', formData)
                 if (response.data.success) {
                     alert('Wilayah berhasil ditambahkan')
@@ -170,7 +307,6 @@ const Location = () => {
                     fetchLocations()
                 }
             } else {
-                // Update existing location
                 const response = await apiInstanceExpress.put(`/admin/update/allowedRegion/${editingId}`, formData)
                 if (response.data.success) {
                     alert('Wilayah berhasil diperbarui')
@@ -216,6 +352,270 @@ const Location = () => {
         } catch (error) {
             console.error('Error deleting location:', error)
             alert('Gagal menghapus wilayah')
+        }
+    }
+
+    // Render dropdown berdasarkan level
+    const renderWilayahDropdown = () => {
+        if (modalMode === 'edit') {
+            return (
+                <div className="grid gap-2">
+                    <Label htmlFor="regionName">Nama Wilayah</Label>
+                    <Input
+                        id="regionName"
+                        value={formData.regionName}
+                        onChange={(e) => setFormData({ ...formData, regionName: e.target.value })}
+                        placeholder="Contoh: Jawa Timur"
+                    />
+                </div>
+            )
+        }
+
+        switch (formData.level) {
+            case 'provinsi':
+                return (
+                    <div className="grid gap-2">
+                        <Label>Pilih Provinsi</Label>
+                        <Select 
+                            value={formData.regionCode} 
+                            onValueChange={(value) => {
+                                const provinsi = provinsiList.find(p => p.id === value)
+                                if (provinsi) handleWilayahSelect(provinsi)
+                            }}
+                            disabled={loadingEmsifa}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Provinsi"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {provinsiList.map((provinsi) => (
+                                    <SelectItem key={provinsi.id} value={provinsi.id}>
+                                        {provinsi.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )
+
+            case 'kabupaten':
+                return (
+                    <>
+                        <div className="grid gap-2">
+                            <Label>Pilih Provinsi</Label>
+                            <Select 
+                                value={selectedProvinsi} 
+                                onValueChange={setSelectedProvinsi}
+                                disabled={loadingEmsifa}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Provinsi"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {provinsiList.map((provinsi) => (
+                                        <SelectItem key={provinsi.id} value={provinsi.id}>
+                                            {provinsi.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {selectedProvinsi && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Kabupaten</Label>
+                                <Select 
+                                    value={formData.regionCode} 
+                                    onValueChange={(value) => {
+                                        const kabupaten = kabupatenList.find(k => k.id === value)
+                                        if (kabupaten) handleWilayahSelect(kabupaten)
+                                    }}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Kabupaten"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {kabupatenList.map((kabupaten) => (
+                                            <SelectItem key={kabupaten.id} value={kabupaten.id}>
+                                                {kabupaten.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                    </>
+                )
+
+            case 'kecamatan':
+                return (
+                    <>
+                        <div className="grid gap-2">
+                            <Label>Pilih Provinsi</Label>
+                            <Select 
+                                value={selectedProvinsi} 
+                                onValueChange={setSelectedProvinsi}
+                                disabled={loadingEmsifa}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Provinsi"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {provinsiList.map((provinsi) => (
+                                        <SelectItem key={provinsi.id} value={provinsi.id}>
+                                            {provinsi.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {selectedProvinsi && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Kabupaten</Label>
+                                <Select 
+                                    value={selectedKabupaten} 
+                                    onValueChange={setSelectedKabupaten}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Kabupaten"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {kabupatenList.map((kabupaten) => (
+                                            <SelectItem key={kabupaten.id} value={kabupaten.id}>
+                                                {kabupaten.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
+                        {selectedKabupaten && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Kecamatan</Label>
+                                <Select 
+                                    value={formData.regionCode} 
+                                    onValueChange={(value) => {
+                                        const kecamatan = kecamatanList.find(k => k.id === value)
+                                        if (kecamatan) handleWilayahSelect(kecamatan)
+                                    }}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Kecamatan"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {kecamatanList.map((kecamatan) => (
+                                            <SelectItem key={kecamatan.id} value={kecamatan.id}>
+                                                {kecamatan.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                    </>
+                )
+
+            case 'desa':
+                return (
+                    <>
+                        <div className="grid gap-2">
+                            <Label>Pilih Provinsi</Label>
+                            <Select 
+                                value={selectedProvinsi} 
+                                onValueChange={setSelectedProvinsi}
+                                disabled={loadingEmsifa}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Provinsi"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {provinsiList.map((provinsi) => (
+                                        <SelectItem key={provinsi.id} value={provinsi.id}>
+                                            {provinsi.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {selectedProvinsi && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Kabupaten</Label>
+                                <Select 
+                                    value={selectedKabupaten} 
+                                    onValueChange={setSelectedKabupaten}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Kabupaten"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {kabupatenList.map((kabupaten) => (
+                                            <SelectItem key={kabupaten.id} value={kabupaten.id}>
+                                                {kabupaten.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
+                        {selectedKabupaten && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Kecamatan</Label>
+                                <Select 
+                                    value={selectedKecamatan} 
+                                    onValueChange={setSelectedKecamatan}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Kecamatan"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {kecamatanList.map((kecamatan) => (
+                                            <SelectItem key={kecamatan.id} value={kecamatan.id}>
+                                                {kecamatan.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
+                        {selectedKecamatan && (
+                            <div className="grid gap-2">
+                                <Label>Pilih Desa</Label>
+                                <Select 
+                                    value={formData.regionCode} 
+                                    onValueChange={(value) => {
+                                        const desa = desaList.find(d => d.id === value)
+                                        if (desa) handleWilayahSelect(desa)
+                                    }}
+                                    disabled={loadingEmsifa}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingEmsifa ? "Memuat..." : "Pilih Desa"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {desaList.map((desa) => (
+                                            <SelectItem key={desa.id} value={desa.id}>
+                                                {desa.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                    </>
+                )
+
+            default:
+                return null
         }
     }
 
@@ -369,44 +769,24 @@ const Location = () => {
                 </Card>
 
                 <Dialog open={showModal} onOpenChange={setShowModal}>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
                             <DialogTitle>
                                 {modalMode === 'add' ? 'Tambah Wilayah Baru' : 'Edit Wilayah'}
                             </DialogTitle>
                             <DialogDescription>
                                 {modalMode === 'add' 
-                                    ? 'Tambahkan wilayah baru ke dalam sistem' 
+                                    ? 'Pilih wilayah dari data Emsifa API' 
                                     : 'Perbarui informasi wilayah'}
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="regionCode">Kode Wilayah</Label>
-                                <Input
-                                    id="regionCode"
-                                    value={formData.regionCode}
-                                    onChange={(e) => setFormData({ ...formData, regionCode: e.target.value })}
-                                    placeholder="Contoh: 35"
-                                    disabled={modalMode === 'edit'}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="regionName">Nama Wilayah</Label>
-                                <Input
-                                    id="regionName"
-                                    value={formData.regionName}
-                                    onChange={(e) => setFormData({ ...formData, regionName: e.target.value })}
-                                    placeholder="Contoh: Jawa Timur"
-                                />
-                            </div>
-
+                        <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
                             <div className="grid gap-2">
                                 <Label htmlFor="level">Level Wilayah</Label>
                                 <Select 
                                     value={formData.level} 
-                                    onValueChange={(value) => setFormData({ ...formData, level: value })}
+                                    onValueChange={handleLevelChange}
+                                    disabled={modalMode === 'edit'}
                                 >
                                     <SelectTrigger id="level">
                                         <SelectValue />
@@ -419,6 +799,30 @@ const Location = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
+
+                            {renderWilayahDropdown()}
+
+                            {formData.regionCode && (
+                                <div className="grid gap-2">
+                                    <Label>Kode Wilayah</Label>
+                                    <Input
+                                        value={formData.regionCode}
+                                        disabled
+                                        className="bg-muted"
+                                    />
+                                </div>
+                            )}
+
+                            {formData.regionName && (
+                                <div className="grid gap-2">
+                                    <Label>Nama Wilayah</Label>
+                                    <Input
+                                        value={formData.regionName}
+                                        disabled
+                                        className="bg-muted"
+                                    />
+                                </div>
+                            )}
 
                             <div className="grid gap-2">
                                 <Label htmlFor="status">Status</Label>
@@ -440,7 +844,7 @@ const Location = () => {
                             <Button variant="outline" onClick={() => setShowModal(false)}>
                                 Batal
                             </Button>
-                            <Button onClick={handleSubmit} disabled={loading}>
+                            <Button onClick={handleSubmit} disabled={loading || !formData.regionCode}>
                                 {loading ? 'Menyimpan...' : modalMode === 'add' ? 'Tambah' : 'Simpan'}
                             </Button>
                         </DialogFooter>
