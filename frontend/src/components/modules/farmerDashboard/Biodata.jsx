@@ -84,6 +84,8 @@ const FarmerBiodata = z.object({
 
 const Biodata = () => {
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
+    
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [dobOpen, setDobOpen] = useState(false);
@@ -144,6 +146,7 @@ const Biodata = () => {
         setIsLoading(true);
 
         try {
+            const token = await currentUser.getIdToken();
             const fd = new FormData();
 
             fd.append("NIK", data.nik);
@@ -153,7 +156,6 @@ const Biodata = () => {
             fd.append("gender", data.gender);
             if (data.phone) fd.append("phone", data.phone);
 
-            // Data Alamat
             fd.append("postalCode", data.postalCode);
             fd.append("province", data.province);
             if (data.provinceCode) fd.append("provinceCode", data.provinceCode);
@@ -165,7 +167,6 @@ const Biodata = () => {
             if (data.wardCode) fd.append("wardCode", data.wardCode);
             fd.append("address", data.address);
 
-            // Data Pertanian
             fd.append("landArea", String(data.landArea));
             fd.append("riceVariety", data.riceVariety);
             fd.append("estimatedHarvest", String(data.estimatedHarvest));
@@ -179,7 +180,10 @@ const Biodata = () => {
             fd.append("createdBy", userData._id);
 
             const response = await apiInstanceExpress.post("/farmer/biodata/create", fd, {
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: { 
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
+                },
             });
 
             if (response.status === 201) {
