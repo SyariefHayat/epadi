@@ -5,8 +5,8 @@ const verifyToken = require("../middlewares/verifyToken");
 const verifyLocation = require("../middlewares/verifyLocation");
 
 const authController = require("../controllers/auth.controller");
-const biodataController = require("../controllers/biodata.controller");
 const adminController = require("../controllers/admin.controller");
+const biodataController = require("../controllers/biodata.controller");
 const locationController = require('../controllers/location.controller');
 const allowedRegionController = require('../controllers/allowedRegion.controller');
 

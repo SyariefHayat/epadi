@@ -421,7 +421,7 @@ const SignUp = () => {
 
                                 <Button
                                     type="submit"
-                                    className={`${roleData?.color} w-full`}
+                                    className={`${roleData?.color} w-full cursor-pointer`}
                                     disabled={isLoading}
                                 >
                                     {isLoading ? "Mendaftarkan..." : "Daftar"}

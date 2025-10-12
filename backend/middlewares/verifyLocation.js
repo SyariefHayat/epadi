@@ -1,4 +1,4 @@
-const AllowedRegion = require("../models/allowed.region.model");
+const { AllowedRegion } = require("../models/allowed.region.model");
 const { ERR } = require("../utils/response");
 
 const verifyLocation = async (req, res, next) => {

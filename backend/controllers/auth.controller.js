@@ -48,6 +48,7 @@ const SignUpUser = async (req, res) => {
             await Farmer.create({
                 userId: user._id,
                 NIK,
+                fullName,
                 provinceCode,
                 province,
                 cityCode,
