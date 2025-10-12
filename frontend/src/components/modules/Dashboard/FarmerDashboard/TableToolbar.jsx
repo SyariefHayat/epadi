@@ -42,7 +42,7 @@ const TableToolbar = ({
                     />
                 </div>
 
-                <a href="/admin/petani/create">
+                <a href="/admin/farmer/create">
                     <Button 
                         className="h-8.5 flex items-center gap-2 cursor-pointer" 
                     >

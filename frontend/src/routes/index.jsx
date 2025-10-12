@@ -29,6 +29,7 @@ import SignIn from "@/pages/auth/SignIn"
 import ProtectedAdminRoute from "@/components/modules/auth/ProtectedAdminRoute"
 import Farmers from "@/pages/dashboard/admin/Farmers"
 import FarmerCreate from "@/pages/dashboard/admin/FarmerCreate"
+import Location from "@/pages/dashboard/admin/Location"
 
 const routes = [
     { 
@@ -95,7 +96,7 @@ const routes = [
         errorElement: <ErrorBoundary />,
     },
     { 
-        path: "/admin/users/petani", 
+        path: "/admin/users/farmers", 
         element:
             <ProtectedAdminRoute>
                 <Farmers />
@@ -103,7 +104,15 @@ const routes = [
         errorElement: <ErrorBoundary />,
     },
     { 
-        path: "/admin/petani/create", 
+        path: "/admin/location", 
+        element:
+            <ProtectedAdminRoute>
+                <Location />
+            </ProtectedAdminRoute>,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/admin/farmer/create", 
         element:
             <ProtectedAdminRoute>
                 <FarmerCreate />

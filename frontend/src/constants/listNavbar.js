@@ -62,7 +62,7 @@ export const LIST_NAVBAR_ADMIN_DB = [
         items: [
             {
                 title: "Petani",
-                url: "/admin/users/petani",
+                url: "/admin/users/farmers",
                 icon: User,
             },
             {
