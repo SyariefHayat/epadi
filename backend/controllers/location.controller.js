@@ -1,25 +1,15 @@
-const { User } = require('../models/user.model');
+const { Farmer } = require('../models/farmer.model');
 
 const getProvinces = async (req, res) => {
     try {
-        const provinces = await User.aggregate([
-            { $match: { role: 'farmer' } },
-            {
-                $lookup: {
-                    from: 'farmers',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'farmerDetail'
-                }
-            },
-            { $unwind: '$farmerDetail' },
+        const provinces = await Farmer.aggregate([
             {
                 $group: {
-                    _id: '$farmerDetail.province',
-                    name: { $first: '$farmerDetail.province' }
+                    _id: '$province',
+                    name: { $first: '$province' }
                 }
             },
-            { $match: { _id: { $ne: null } } },
+            { $match: { _id: { $ne: null, $ne: '' } } },
             { $sort: { name: 1 } },
             {
                 $project: {
@@ -50,25 +40,15 @@ const getCities = async (req, res) => {
             return res.status(400).json({ message: 'Province ID is required' });
         }
 
-        const cities = await User.aggregate([
-            { $match: { role: 'farmer' } },
-            {
-                $lookup: {
-                    from: 'farmers',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'farmerDetail'
-                }
-            },
-            { $unwind: '$farmerDetail' },
-            { $match: { 'farmerDetail.province': provinceId } },
+        const cities = await Farmer.aggregate([
+            { $match: { province: provinceId } },
             {
                 $group: {
-                    _id: '$farmerDetail.city',
-                    name: { $first: '$farmerDetail.city' }
+                    _id: '$city',
+                    name: { $first: '$city' }
                 }
             },
-            { $match: { _id: { $ne: null } } },
+            { $match: { _id: { $ne: null, $ne: '' } } },
             { $sort: { name: 1 } },
             {
                 $project: {
@@ -99,25 +79,15 @@ const getSubDistricts = async (req, res) => {
             return res.status(400).json({ message: 'City ID is required' });
         }
 
-        const subDistricts = await User.aggregate([
-            { $match: { role: 'farmer' } },
-            {
-                $lookup: {
-                    from: 'farmers',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'farmerDetail'
-                }
-            },
-            { $unwind: '$farmerDetail' },
-            { $match: { 'farmerDetail.city': cityId } },
+        const subDistricts = await Farmer.aggregate([
+            { $match: { city: cityId } },
             {
                 $group: {
-                    _id: '$farmerDetail.subDistrict',
-                    name: { $first: '$farmerDetail.subDistrict' }
+                    _id: '$subDistrict',
+                    name: { $first: '$subDistrict' }
                 }
             },
-            { $match: { _id: { $ne: null } } },
+            { $match: { _id: { $ne: null, $ne: '' } } },
             { $sort: { name: 1 } },
             {
                 $project: {
@@ -148,25 +118,15 @@ const getWards = async (req, res) => {
             return res.status(400).json({ message: 'Sub-district ID is required' });
         }
 
-        const wards = await User.aggregate([
-            { $match: { role: 'farmer' } },
-            {
-                $lookup: {
-                    from: 'farmers',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'farmerDetail'
-                }
-            },
-            { $unwind: '$farmerDetail' },
-            { $match: { 'farmerDetail.subDistrict': subDistrictId } },
+        const wards = await Farmer.aggregate([
+            { $match: { subDistrict: subDistrictId } },
             {
                 $group: {
-                    _id: '$farmerDetail.ward',
-                    name: { $first: '$farmerDetail.ward' }
+                    _id: '$ward',
+                    name: { $first: '$ward' }
                 }
             },
-            { $match: { _id: { $ne: null } } },
+            { $match: { _id: { $ne: null, $ne: '' } } },
             { $sort: { name: 1 } },
             {
                 $project: {

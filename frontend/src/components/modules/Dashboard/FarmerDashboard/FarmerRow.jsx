@@ -113,8 +113,9 @@ const FarmerRow = ({ farmer, onEdit, onDelete }) => {
                 <TableCell className="font-medium">{farmer?.fullName || '-'}</TableCell>
                 <TableCell>{farmer?.NIK || '-'}</TableCell>
                 <TableCell>
+                    {console.log(farmer)}
                     <Badge variant="outline" className="capitalize">
-                        {farmer?.userId?.role || 'N/A'}
+                        {farmer?.userId?.role || 'farmer'}
                     </Badge>
                 </TableCell>
                 <TableCell>

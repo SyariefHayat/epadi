@@ -3,6 +3,7 @@ import {
     HandCoins, 
     Home, 
     Leaf, 
+    Map, 
     MessageSquareText, 
     Settings, 
     User, 
@@ -57,12 +58,17 @@ export const LIST_NAVBAR_ADMIN_DB = [
         ],
     },
     {
-        title: "Manajemen User",
+        title: "Manajemen",
         items: [
             {
                 title: "Petani",
                 url: "/admin/users/petani",
                 icon: User,
+            },
+            {
+                title: "Wilayah",
+                url: "/admin/location",
+                icon: Map,
             },
             // {
             //     title: "Distributor",
