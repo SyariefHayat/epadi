@@ -23,6 +23,6 @@ const AllowedRegionSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-const AllowedRegion = mongoose.model("AllowedRegion", AllowedRegionSchema);
-
-module.exports = AllowedRegion;
+module.exports = {
+    AllowedRegion: mongoose.model("AllowedRegion", AllowedRegionSchema),
+};
