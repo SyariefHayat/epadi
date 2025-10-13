@@ -313,11 +313,30 @@ const updateFarmerBiodata = async (req, res) => {
 
 const deleteFarmerBiodata = async (req, res) => {
     try {
-        console.log("lll");
+        const { farmerId } = req.params;
+
+        if (!farmerId) {
+            return res.status(400).json({ message: "ID tidak valid." });
+        }
+
+        const farmer = await Farmer.findById(farmerId);
+        if (!farmer) {
+            return res.status(404).json({ message: "Data petani tidak ditemukan." });
+        }
+
+        await Farmer.deleteOne({ _id: farmerId });
+
+        if (farmer.profilePicture) {
+            const localPath = path.join(PROFILE_DIR, farmer.profilePicture);
+            safeUnlink(localPath);
+        }
+
+        return res.status(204).send();
     } catch (error) {
-        console.error(error);
+        console.error("deleteFarmerBiodata error:", error);
+        return res.status(500).json({ message: "Terjadi kesalahan pada server." });
     }
-}
+};
 
 module.exports = {
     FarmerBiodata,
