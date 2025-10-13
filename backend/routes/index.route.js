@@ -34,7 +34,8 @@ router.get('/location/sub-districts', verifyToken, isOperator, locationControlle
 router.get('/location/wards', verifyToken, isOperator, locationController.getWards);
 
 router.post("/farmer/biodata/create", verifyToken, upload.single("profilePhoto"), verifyLocation, biodataController.FarmerBiodata);
-router.put("/farmer/biodata/edit/:farmerId", verifyToken, biodataController.updateFarmerBiodata);
+router.put("/farmer/biodata/edit/:farmerId", verifyToken, upload.single("profilePhoto"), biodataController.updateFarmerBiodata);
 router.get("/farmer/biodata/get/:userId", verifyToken, biodataController.getFarmerBiodata);
+router.delete("/farmer/biodata/delete/:farmerId", verifyToken, isOperator, biodataController.deleteFarmerBiodata);
 
 module.exports = router;
