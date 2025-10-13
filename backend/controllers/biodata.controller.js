@@ -158,7 +158,12 @@ const getFarmerBiodata = async (req, res) => {
     }
 };
 
+const updateFarmerBiodata = async (req, res) => {
+    console.log(req.body)
+}
+
 module.exports = {
     FarmerBiodata,
     getFarmerBiodata,
+    updateFarmerBiodata,
 }

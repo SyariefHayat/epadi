@@ -38,7 +38,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { apiInstanceExpress } from "@/services/apiInstance";
 
-
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -254,7 +253,6 @@ const Biodata = () => {
             }
         })();
     }, [distId]);
-    
 
     return (
         <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
