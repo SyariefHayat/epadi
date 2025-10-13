@@ -317,7 +317,6 @@ const Location = () => {
         } catch (error) {
             console.error('Error saving location:', error)
             const errorMsg = error.response?.data?.message || 'Gagal menyimpan data wilayah'
-            alert(errorMsg)
         } finally {
             setLoading(false)
         }
@@ -628,7 +627,7 @@ const Location = () => {
                         <p className="text-muted-foreground mt-1">Kelola hierarki wilayah dan akses pengguna</p>
                     </div>
                     <div className="flex gap-2">
-                        <Button onClick={handleAdd} className="gap-2">
+                        <Button onClick={handleAdd} className="gap-2 cursor-pointer">
                             <Plus className="w-4 h-4" />
                             Tambah Wilayah
                         </Button>
@@ -746,6 +745,7 @@ const Location = () => {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
+                                                            className="cursor-pointer"
                                                             onClick={() => handleEdit(location)}
                                                         >
                                                             <Edit2 className="w-4 h-4" />
@@ -753,6 +753,7 @@ const Location = () => {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
+                                                            className="cursor-pointer"
                                                             onClick={() => handleDeleteClick(location)}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -841,10 +842,10 @@ const Location = () => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setShowModal(false)}>
+                            <Button variant="outline" className="cursor-pointer" onClick={() => setShowModal(false)}>
                                 Batal
                             </Button>
-                            <Button onClick={handleSubmit} disabled={loading || !formData.regionCode}>
+                            <Button className="cursor-pointer" onClick={handleSubmit} disabled={loading || !formData.regionCode}>
                                 {loading ? 'Menyimpan...' : modalMode === 'add' ? 'Tambah' : 'Simpan'}
                             </Button>
                         </DialogFooter>
@@ -860,8 +861,8 @@ const Location = () => {
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Batal</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteConfirm}>
+                            <AlertDialogCancel className="cursor-pointer">Batal</AlertDialogCancel>
+                            <AlertDialogAction className="cursor-pointer" onClick={handleDeleteConfirm}>
                                 Hapus
                             </AlertDialogAction>
                         </AlertDialogFooter>

@@ -14,7 +14,7 @@ const AllowedRegionSchema = new mongoose.Schema({
     },
     level: {
         type: String,
-        enum: ["province", "regency", "district", "village"],
+        enum: ["provinsi", "kabupaten", "kecamatan", "desa"],
         required: true,
     },
     isActive: {
