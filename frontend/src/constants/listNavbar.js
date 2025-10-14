@@ -92,7 +92,42 @@ export const LIST_NAVBAR_ADMIN_DB = [
         items: [
             {
                 title: "Pengaturan",
-                url: "/admin/settings",
+                url: "#",
+                // url: "/admin/settings",
+                icon: Settings,
+            },
+        ],
+    },
+];
+
+export const LIST_NAVBAR_OPERATOR_DB = [
+    {
+        title: "Main",
+        items: [
+            {
+                title: "Dashboard",
+                url: "/admin/dashboard",
+                icon: Home,
+            },
+        ],
+    },
+    {
+        title: "Manajemen",
+        items: [
+            {
+                title: "Petani",
+                url: "/admin/users/farmers",
+                icon: User,
+            },
+        ],
+    },
+    {
+        title: "Lainnya",
+        items: [
+            {
+                title: "Pengaturan",
+                url: "#",
+                // url: "/admin/settings",
                 icon: Settings,
             },
         ],

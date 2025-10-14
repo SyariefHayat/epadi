@@ -17,7 +17,8 @@ import {
 
 import { 
     LIST_NAVBAR_ADMIN_DB, 
-    LIST_NAVBAR_FARMER_DB 
+    LIST_NAVBAR_FARMER_DB, 
+    LIST_NAVBAR_OPERATOR_DB
 } from "@/constants/listNavbar"
 
 import NavUser from "./NavUser"
@@ -49,7 +50,13 @@ const AppSidebar = () => {
 
             <SidebarContent>
                 <EachUtils
-                    of={userData.role === "admin" ? LIST_NAVBAR_ADMIN_DB : LIST_NAVBAR_FARMER_DB}
+                    of={
+                        userData.role === "admin"
+                            ? LIST_NAVBAR_ADMIN_DB
+                            : userData.role === "operator"
+                            ? LIST_NAVBAR_OPERATOR_DB
+                            : LIST_NAVBAR_FARMER_DB
+                    }
                     render={(item, index) => (
                         <SidebarGroup key={index} className="py-1 px-2">
                             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
@@ -61,7 +68,7 @@ const AppSidebar = () => {
                                             <SidebarMenuItem key={index}>
                                                 <SidebarMenuButton asChild>
                                                     <Link to={item.url}>
-                                                        <item.icon size={20} color='#9ca3af' />
+                                                        <item.icon size={20} color="#9ca3af" />
                                                         <span>{item.title}</span>
                                                     </Link>
                                                 </SidebarMenuButton>

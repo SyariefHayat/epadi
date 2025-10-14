@@ -90,17 +90,17 @@ const routes = [
     { 
         path: "/admin/dashboard", 
         element: 
-            <ProtectedAdminRoute>
+            <ProtectedRoute>
                 <Admin />
-            </ProtectedAdminRoute>,
+            </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },
     { 
         path: "/admin/users/farmers", 
         element:
-            <ProtectedAdminRoute>
+            <ProtectedRoute>
                 <Farmers />
-            </ProtectedAdminRoute>,
+            </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },
     { 
@@ -114,9 +114,17 @@ const routes = [
     { 
         path: "/admin/farmer/create", 
         element:
-            <ProtectedAdminRoute>
+            <ProtectedRoute>
                 <FarmerCreate />
-            </ProtectedAdminRoute>,
+            </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/operator/dashboard", 
+        element: 
+            <ProtectedRoute>
+                <Admin />
+            </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },
     { 
