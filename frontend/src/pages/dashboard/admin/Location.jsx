@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react'
 
 import { 
     Plus, 
-    Search, 
     Edit2, 
     Trash2, 
     MapPin, 
     Users, 
     RefreshCw,
-    Download
 } from 'lucide-react'
 
 import {
@@ -50,17 +48,20 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import { useAuth } from '@/context/AuthContext'
 import { apiInstanceExpress } from '@/services/apiInstance'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 const Location = () => {
-    // States
+    const { currentUser } = useAuth();
+
     const [locations, setLocations] = useState([])
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [modalMode, setModalMode] = useState('add')
     const [locationToDelete, setLocationToDelete] = useState(null)
+
     const [stats, setStats] = useState({
         total: 0,
         provinsi: 0,
@@ -77,7 +78,6 @@ const Location = () => {
     
     const [editingId, setEditingId] = useState(null)
 
-    // Emsifa API States
     const [provinsiList, setProvinsiList] = useState([])
     const [kabupatenList, setKabupatenList] = useState([])
     const [kecamatanList, setKecamatanList] = useState([])
@@ -92,39 +92,37 @@ const Location = () => {
         fetchLocations()
     }, [])
 
-    // Fetch Provinsi dari Emsifa saat modal dibuka
+    
     useEffect(() => {
         if (showModal && modalMode === 'add') {
             fetchProvinsi()
         }
     }, [showModal, modalMode])
 
-    // Fetch Kabupaten ketika provinsi dipilih
     useEffect(() => {
         if (selectedProvinsi && ['kabupaten', 'kecamatan', 'desa'].includes(formData.level)) {
             fetchKabupaten(selectedProvinsi)
         }
     }, [selectedProvinsi, formData.level])
 
-    // Fetch Kecamatan ketika kabupaten dipilih
     useEffect(() => {
         if (selectedKabupaten && ['kecamatan', 'desa'].includes(formData.level)) {
             fetchKecamatan(selectedProvinsi, selectedKabupaten)
         }
     }, [selectedKabupaten, formData.level])
 
-    // Fetch Desa ketika kecamatan dipilih
     useEffect(() => {
         if (selectedKecamatan && formData.level === 'desa') {
             fetchDesa(selectedProvinsi, selectedKabupaten, selectedKecamatan)
         }
     }, [selectedKecamatan, formData.level])
 
-    // Fetch all locations
     const fetchLocations = async () => {
         setLoading(true)
         try {
+            const token = await currentUser.getIdToken();
             const response = await apiInstanceExpress.get('/admin/get/allowedRegion')
+
             if (response.data.success) {
                 setLocations(response.data.data)
                 calculateStats(response.data.data)
@@ -137,7 +135,6 @@ const Location = () => {
         }
     }
 
-    // Fetch Provinsi dari Emsifa
     const fetchProvinsi = async () => {
         setLoadingEmsifa(true)
         try {
@@ -152,7 +149,6 @@ const Location = () => {
         }
     }
 
-    // Fetch Kabupaten dari Emsifa
     const fetchKabupaten = async (provinsiId) => {
         setLoadingEmsifa(true)
         try {
@@ -167,7 +163,6 @@ const Location = () => {
         }
     }
 
-    // Fetch Kecamatan dari Emsifa
     const fetchKecamatan = async (provinsiId, kabupatenId) => {
         setLoadingEmsifa(true)
         try {
@@ -182,7 +177,6 @@ const Location = () => {
         }
     }
 
-    // Fetch Desa dari Emsifa
     const fetchDesa = async (provinsiId, kabupatenId, kecamatanId) => {
         setLoadingEmsifa(true)
         try {
@@ -197,7 +191,6 @@ const Location = () => {
         }
     }
 
-    // Calculate statistics
     const calculateStats = (data) => {
         setStats({
             total: data.length,
@@ -207,7 +200,6 @@ const Location = () => {
         })
     }
 
-    // Get level label
     const getLevelLabel = (level) => {
         const labels = {
             'provinsi': 'Provinsi',
@@ -218,7 +210,6 @@ const Location = () => {
         return labels[level] || level
     }
 
-    // Handle add button click
     const handleAdd = () => {
         setModalMode('add')
         setFormData({
@@ -237,7 +228,6 @@ const Location = () => {
         setShowModal(true)
     }
 
-    // Handle level change
     const handleLevelChange = (level) => {
         setFormData({ 
             ...formData, 
@@ -253,7 +243,6 @@ const Location = () => {
         setDesaList([])
     }
 
-    // Handle wilayah selection dari Emsifa
     const handleWilayahSelect = (item) => {
         setFormData({
             ...formData,
@@ -271,7 +260,6 @@ const Location = () => {
         }
     }
 
-    // Handle edit button click
     const handleEdit = (location) => {
         setModalMode('edit')
         setFormData({
@@ -284,13 +272,11 @@ const Location = () => {
         setShowModal(true)
     }
 
-    // Handle delete button click
     const handleDeleteClick = (location) => {
         setLocationToDelete(location)
         setShowDeleteDialog(true)
     }
 
-    // Handle form submit
     const handleSubmit = async () => {
         if (!formData.regionCode || !formData.regionName || !formData.level) {
             alert('Mohon lengkapi semua field')
@@ -300,14 +286,20 @@ const Location = () => {
         setLoading(true)
         try {
             if (modalMode === 'add') {
-                const response = await apiInstanceExpress.post('/admin/create/allowedRegion', formData)
+                const response = await apiInstanceExpress.post('/admin/create/allowedRegion', formData);
+
                 if (response.data.success) {
                     alert('Wilayah berhasil ditambahkan')
                     setShowModal(false)
                     fetchLocations()
                 }
             } else {
-                const response = await apiInstanceExpress.put(`/admin/update/allowedRegion/${editingId}`, formData)
+                const response = await apiInstanceExpress.put(`/admin/update/allowedRegion/${editingId}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+
                 if (response.data.success) {
                     alert('Wilayah berhasil diperbarui')
                     setShowModal(false)
@@ -322,10 +314,10 @@ const Location = () => {
         }
     }
 
-    // Handle toggle status
     const handleToggleStatus = async (location) => {
         try {
-            const response = await apiInstanceExpress.patch(`/admin/toggle/allowedRegion/${location._id}`)
+            const response = await apiInstanceExpress.patch(`/admin/toggle/allowedRegion/${location._id}`);
+
             if (response.data.success) {
                 alert(response.data.message)
                 fetchLocations()
@@ -336,12 +328,12 @@ const Location = () => {
         }
     }
 
-    // Handle delete confirm
     const handleDeleteConfirm = async () => {
         if (!locationToDelete) return
 
         try {
-            const response = await apiInstanceExpress.delete(`/admin/delete/allowedRegion/${locationToDelete._id}`)
+            const response = await apiInstanceExpress.delete(`/admin/delete/allowedRegion/${locationToDelete._id}`);
+
             if (response.data.success) {
                 alert('Wilayah berhasil dihapus')
                 setShowDeleteDialog(false)
@@ -354,7 +346,6 @@ const Location = () => {
         }
     }
 
-    // Render dropdown berdasarkan level
     const renderWilayahDropdown = () => {
         if (modalMode === 'edit') {
             return (
