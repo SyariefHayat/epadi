@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const { Farmer } = require("../models/farmer.model");
+const { Buyer } = require("../models/buyer.model");
 const { User } = require("../models/user.model");
 const { SUC, ERR } = require("../utils/response");
 
@@ -20,7 +21,8 @@ const SignUpUser = async (req, res) => {
             subDistrict,
             wardCode,
             ward,
-            isActive 
+            isActive,
+            purchasingCapacity,
         } = req.body;
 
         if (!uid || !email || !fullName || !role)
@@ -58,7 +60,21 @@ const SignUpUser = async (req, res) => {
                 wardCode,
                 ward,
             });
-        };
+        } else if (role === "buyer") {
+            await Buyer.create({
+                userId: user._id,
+                fullName,
+                provinceCode,
+                province,
+                cityCode,
+                city,
+                subDistrictCode,
+                subDistrict,
+                wardCode,
+                ward,
+                purchasingCapacity,
+            });
+        }
 
         return SUC(res, 201, user,"User created successfully");
     } catch (error) {

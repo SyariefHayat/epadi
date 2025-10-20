@@ -14,7 +14,7 @@ import { getGreeting } from '@/utils/greeting'
 import { formatTanggalIndo } from '@/utils/formatDate'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-const seller = () => {
+const Buyer = () => {
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -130,4 +130,4 @@ const seller = () => {
     )
 }
 
-export default seller
+export default Buyer

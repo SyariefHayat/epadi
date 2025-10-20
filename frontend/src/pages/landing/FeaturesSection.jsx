@@ -1,12 +1,11 @@
 import React from 'react';
 
 import EachUtils from '@/utils/EachUtils';
-import { Button } from '@/components/ui/button';
 import { LIST_FEATURES } from '@/constants/listFeatures';
 
 const FeaturesSection = () => {
     return (
-        <section className="w-full h-full py-12 md:py-5 px-4 sm:px-6 lg:px-20 bg-white md:mb-5">
+        <section className="w-full h-full py-12 md:py-5 px-4 sm:px-6 lg:px-20 bg-white">
             <div className="max-w-7xl mx-auto mt-5">
                 <h3 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 text-center mb-12 lg:mb-20">
                 Apa Yang Kami Tawarkan?
@@ -40,11 +39,11 @@ const FeaturesSection = () => {
                     />
                 </div>
 
-                <div className="text-center mt-12">
+                {/* <div className="text-center mt-12">
                     <a href="/signup" className="text-center mt-12">
                         <Button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg rounded-full shadow-md cursor-pointer">Mulai Sekarang</Button>
                     </a>
-                </div>
+                </div> */}
             </div>
         </section>
     );

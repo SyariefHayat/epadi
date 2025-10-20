@@ -1,6 +1,6 @@
 import Community from "@/pages/community"
 import Cooperation from "@/pages/cooperation"
-import Seller from "@/pages/dashboard/Seller"
+import Seller from "@/pages/dashboard/Buyer"
 import Home from "@/pages/landing/Home"
 import Cart from "@/pages/mart/Cart"
 import Category from "@/pages/mart/Category"
@@ -30,6 +30,7 @@ import ProtectedAdminRoute from "@/components/modules/auth/ProtectedAdminRoute"
 import Farmers from "@/pages/dashboard/admin/Farmers"
 import FarmerCreate from "@/pages/dashboard/admin/FarmerCreate"
 import Location from "@/pages/dashboard/admin/Location"
+import Buyer from "@/pages/dashboard/Buyer"
 
 const routes = [
     { 
@@ -132,6 +133,14 @@ const routes = [
         element:
             <ProtectedRoute>
                 <Farmer />
+            </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "buyer/dashboard/",
+        element:
+            <ProtectedRoute>
+                <Buyer />
             </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },

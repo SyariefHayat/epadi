@@ -34,10 +34,8 @@ import { apiInstanceExpress } from '@/services/apiInstance';
 import DefaultLayout from '@/components/layouts/DefaultLayout';
 import PasswordField from '@/components/modules/auth/PasswordField';
 
-const SignupSchema = z.object({
-    NIK: z.string()
-        .length(16, { message: "NIK harus 16 digit" })
-        .regex(/^[0-9]+$/, { message: "NIK hanya boleh berisi angka" }),
+// Schema dasar tanpa NIK
+const BaseSignupSchema = z.object({
     fullName: z.string().min(1, { message: "Nama lengkap harus diisi" }),
     province: z.string().min(1, { message: "Provinsi harus dipilih" }),
     regency: z.string().min(1, { message: "Kota harus dipilih" }),
@@ -48,6 +46,24 @@ const SignupSchema = z.object({
         .regex(/[A-Z]/, { message: "Harus ada huruf besar" })
         .regex(/[a-z]/, { message: "Harus ada huruf kecil" }),
     confirmPassword: z.string().min(1, { message: "Konfirmasi password harus diisi" }),
+});
+
+// Schema dengan NIK untuk role selain buyer
+const SignupSchemaWithNIK = BaseSignupSchema.extend({
+    NIK: z.string()
+        .length(16, { message: "NIK harus 16 digit" })
+        .regex(/^[0-9]+$/, { message: "NIK hanya boleh berisi angka" }),
+}).refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Konfirmasi password tidak cocok",
+});
+
+// Schema untuk buyer dengan kemampuan membeli
+const SignupSchemaWithoutNIK = BaseSignupSchema.extend({
+    NIK: z.string().optional(),
+    purchasingCapacity: z.string()
+        .min(1, { message: "Kemampuan membeli harus diisi" })
+        .regex(/^[0-9]+$/, { message: "Kemampuan membeli hanya boleh berisi angka" }),
 }).refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
     message: "Konfirmasi password tidak cocok",
@@ -72,6 +88,7 @@ const SignUp = () => {
     });
 
     const roleData = LIST_ROLE.find((item) => item.id === role);
+    const isBuyer = role === 'buyer';
 
     useEffect(() => {
         if (!roleData) navigate("/role");
@@ -85,7 +102,7 @@ const SignUp = () => {
     }, []);
 
     const form = useForm({
-        resolver: zodResolver(SignupSchema),
+        resolver: zodResolver(isBuyer ? SignupSchemaWithoutNIK : SignupSchemaWithNIK),
         defaultValues: {
             NIK: "",
             fullName: "",
@@ -95,6 +112,7 @@ const SignUp = () => {
             village: "",
             password: "",
             confirmPassword: "",
+            purchasingCapacity: "",
         },
     });
 
@@ -139,24 +157,31 @@ const SignUp = () => {
             const user = register.user;
             await updateProfile(user, { displayName: data.fullName });
 
-            const response = await apiInstanceExpress.post("/sign-up", {
+            const payload = {
                 uid: user.uid,
                 email: user.email,
                 fullName: user.displayName,
                 role,
-                NIK: data.NIK,
-
                 provinceCode: data.province,
                 cityCode: data.regency,
                 subDistrictCode: data.district,
                 wardCode: data.village,
-
                 province: locationNames.provinceName,
                 city: locationNames.regencyName,
                 subDistrict: locationNames.districtName,
                 ward: locationNames.villageName,
                 isActive: true,
-            });
+            };
+
+            if (!isBuyer && data.NIK) {
+                payload.NIK = data.NIK;
+            }
+
+            if (isBuyer && data.purchasingCapacity) {
+                payload.purchasingCapacity = parseInt(data.purchasingCapacity);
+            }
+
+            const response = await apiInstanceExpress.post("/sign-up", payload);
 
             if (response.status === 201) {
                 toast.success("Pendaftaran berhasil!");
@@ -204,19 +229,21 @@ const SignUp = () => {
 
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(handleSignup)} className="space-y-6">
-                                <FormField
-                                    control={form.control}
-                                    name="NIK"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>NIK</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="1234567890123456" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                {!isBuyer && (
+                                    <FormField
+                                        control={form.control}
+                                        name="NIK"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>NIK</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="1234567890123456" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
 
                                 <FormField
                                     control={form.control}
@@ -231,6 +258,26 @@ const SignUp = () => {
                                         </FormItem>
                                     )}
                                 />
+
+                                {isBuyer && (
+                                    <FormField
+                                        control={form.control}
+                                        name="purchasingCapacity"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Kemampuan Membeli (Rp)</FormLabel>
+                                                <FormControl>
+                                                    <Input 
+                                                        type="number" 
+                                                        placeholder="Contoh: 5000000" 
+                                                        {...field} 
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <FormField
