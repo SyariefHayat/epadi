@@ -66,6 +66,11 @@ export const LIST_NAVBAR_ADMIN_DB = [
                 icon: User,
             },
             {
+                title: "Pembeli",
+                url: "/admin/users/buyers",
+                icon: ClipboardList,
+            },
+            {
                 title: "Wilayah",
                 url: "/admin/location",
                 icon: Map,
@@ -79,11 +84,6 @@ export const LIST_NAVBAR_ADMIN_DB = [
             //     title: "Investor",
             //     url: "/admin/users/investor",
             //     icon: Wallet,
-            // },
-            // {
-            //     title: "Pembeli",
-            //     url: "/admin/users/pembeli",
-            //     icon: ClipboardList,
             // },
         ],
     },

@@ -31,6 +31,7 @@ import Farmers from "@/pages/dashboard/admin/Farmers"
 import FarmerCreate from "@/pages/dashboard/admin/FarmerCreate"
 import Location from "@/pages/dashboard/admin/Location"
 import Buyer from "@/pages/dashboard/Buyer"
+import Buyers from "@/pages/dashboard/admin/Buyers"
 
 const routes = [
     { 
@@ -101,6 +102,14 @@ const routes = [
         element:
             <ProtectedRoute>
                 <Farmers />
+            </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
+    },
+    { 
+        path: "/admin/users/buyers", 
+        element:
+            <ProtectedRoute>
+                <Buyers />
             </ProtectedRoute>,
         errorElement: <ErrorBoundary />,
     },

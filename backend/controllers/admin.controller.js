@@ -1,6 +1,7 @@
 const { SUC, ERR } = require("../utils/response");
 const { User } = require("../models/user.model");
 const { Farmer } = require("../models/farmer.model");
+const { Buyer } = require("../models/buyer.model");
 
 // const FarmerBiodata = async (req, res) => {
 //     const profileImgFile = req.file;
@@ -232,8 +233,40 @@ const getAllFarmers = async (req, res) => {
     }
 };
 
+const getAllBuyers = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
+        const totalBuyers = await Buyer.countDocuments();
+
+        const buyers = await Buyer.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .populate("userId", "fullName email phone role")
+            .lean();
+
+        return SUC(res, 200, {
+            data: buyers,
+            pagination: {
+                total: totalBuyers,
+                page,
+                limit,
+                totalPages: Math.ceil(totalBuyers / limit)
+            }
+        }, "Success getting buyers");
+
+    } catch (error) {
+        console.error(error);
+        return ERR(res, 500, "Error getting data");
+    }
+};
+
 module.exports = {
     getFarmerBiodata,
     getDashboardSummary,
     getAllFarmers,
+    getAllBuyers,
 };

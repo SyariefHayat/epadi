@@ -21,6 +21,7 @@ router.post("/sign-out", verifyToken, authController.SignOutUser);
 
 router.get("/admin/get/summary", verifyToken, isOperator, adminController.getDashboardSummary);
 router.get("/admin/get/farmer", verifyToken, isOperator, adminController.getAllFarmers);
+router.get("/admin/get/buyers", verifyToken, isOperator, adminController.getAllBuyers);
 
 router.get("/admin/get/allowedRegion", allowedRegionController.getAllRegions);
 router.post("/admin/create/allowedRegion", allowedRegionController.createRegion);
