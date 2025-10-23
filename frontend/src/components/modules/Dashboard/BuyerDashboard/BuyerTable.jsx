@@ -97,7 +97,7 @@ const BuyerTable = ({
                                     <div className="flex items-center gap-3">
                                         {buyer.profilePicture ? (
                                             <img
-                                                src={buyer.profilePicture}
+                                                src={`${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}${buyer.profilePicture}`}
                                                 alt={buyer.fullName}
                                                 className="h-10 w-10 rounded-full object-cover"
                                             />

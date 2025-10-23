@@ -44,7 +44,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const FarmerBiodata = z.object({
     nik: z.string().regex(/^\d{16}$/, "NIK harus 16 digit angka"),
     fullName: z.string().min(1, "Nama lengkap wajib diisi"),
-    profilePhoto: z.any()
+    farmerProfilePhoto: z.any()
         .optional()
         .refine((file) => !file || file instanceof File, "File foto tidak valid")
         .refine((file) => !file || file.size <= MAX_FILE_SIZE, "Ukuran foto maksimal 2MB")
@@ -106,7 +106,7 @@ const Biodata = () => {
         defaultValues: {
             nik: "",
             fullName: "",
-            profilePhoto: undefined,
+            farmerProfilePhoto: undefined,
 
             dateOfBirth: undefined,
             gender: "",
@@ -150,7 +150,7 @@ const Biodata = () => {
 
             fd.append("NIK", data.nik);
             fd.append("fullName", data.fullName);
-            if (data.profilePhoto) fd.append("profilePhoto", data.profilePhoto);
+            if (data.farmerProfilePhoto) fd.append("farmerProfilePhoto", data.farmerProfilePhoto);
             fd.append("dateOfBirth", data.dateOfBirth.toISOString());
             fd.append("gender", data.gender);
             if (data.phone) fd.append("phone", data.phone);
@@ -280,7 +280,7 @@ const Biodata = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <FormField
                                         control={form.control}
-                                        name="profilePhoto"
+                                        name="farmerProfilePhoto"
                                         render={({ field }) => (
                                         <FormItem className="md:col-span-2">
                                             <FormLabel className="text-sm font-medium text-gray-700">

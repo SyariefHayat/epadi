@@ -43,7 +43,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const BuyerBiodata = z.object({
     fullName: z.string().min(1, "Nama lengkap wajib diisi"),
-    profilePicture: z.any()
+    buyerProfilePhoto: z.any()
         .optional()
         .refine((file) => !file || file instanceof File, "File foto tidak valid")
         .refine((file) => !file || file.size <= MAX_FILE_SIZE, "Ukuran foto maksimal 2MB")
@@ -97,7 +97,7 @@ const BuyerBiodataForm = () => {
         resolver: zodResolver(BuyerBiodata),
         defaultValues: {
             fullName: "",
-            profilePicture: undefined,
+            buyerProfilePhoto: undefined,
 
             dateOfBirth: undefined,
             gender: "",
@@ -132,7 +132,7 @@ const BuyerBiodataForm = () => {
             const fd = new FormData();
 
             fd.append("fullName", data.fullName);
-            if (data.profilePicture) fd.append("profilePicture", data.profilePicture);
+            if (data.buyerProfilePhoto) fd.append("buyerProfilePhoto", data.buyerProfilePhoto);
             fd.append("dateOfBirth", data.dateOfBirth.toISOString());
             fd.append("gender", data.gender);
             if (data.phone) fd.append("phone", data.phone);
@@ -253,7 +253,7 @@ const BuyerBiodataForm = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <FormField
                                         control={form.control}
-                                        name="profilePicture"
+                                        name="buyerProfilePhoto"
                                         render={({ field }) => (
                                             <FormItem className="md:col-span-2">
                                                 <FormLabel className="text-sm font-medium text-gray-700">

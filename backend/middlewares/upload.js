@@ -6,8 +6,10 @@ const cloudinary = require('../config/cloudinary');
 
 const getFolderName = (fieldname) => {
     switch (fieldname) {
-        case 'profilePhoto':
+        case 'farmerProfilePhoto':
             return 'epadi/farmer/profile';
+        case 'buyerProfilePhoto':
+            return 'epadi/buyer/profile';
         default:
             return 'epadi/others';
     }

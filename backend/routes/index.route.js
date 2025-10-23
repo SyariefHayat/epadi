@@ -4,12 +4,12 @@ const upload = require("../middlewares/upload");
 const verifyToken = require("../middlewares/verifyToken");
 const verifyLocation = require("../middlewares/verifyLocation");
 
+const isOperator = require("../middlewares/isOperator");
 const authController = require("../controllers/auth.controller");
 const adminController = require("../controllers/admin.controller");
 const biodataController = require("../controllers/biodata.controller");
 const locationController = require('../controllers/location.controller');
 const allowedRegionController = require('../controllers/allowedRegion.controller');
-const isOperator = require("../middlewares/isOperator");
 
 router.get("/", (req, res) => {
     res.send("Server is running!");
@@ -34,9 +34,11 @@ router.get('/location/cities', verifyToken, isOperator, locationController.getCi
 router.get('/location/sub-districts', verifyToken, isOperator, locationController.getSubDistricts);
 router.get('/location/wards', verifyToken, isOperator, locationController.getWards);
 
-router.post("/farmer/biodata/create", verifyToken, upload.single("profilePhoto"), verifyLocation, biodataController.FarmerBiodata);
-router.put("/farmer/biodata/edit/:farmerId", verifyToken, upload.single("profilePhoto"), biodataController.updateFarmerBiodata);
+router.post("/farmer/biodata/create", verifyToken, upload.single("farmerProfilePhoto"), verifyLocation, biodataController.FarmerBiodata);
+router.put("/farmer/biodata/edit/:farmerId", verifyToken, upload.single("farmerProfilePhoto"), biodataController.updateFarmerBiodata);
 router.get("/farmer/biodata/get/:userId", verifyToken, biodataController.getFarmerBiodata);
 router.delete("/farmer/biodata/delete/:farmerId", verifyToken, isOperator, biodataController.deleteFarmerBiodata);
+
+router.post("/buyer/biodata/create", verifyToken, upload.single("buyerProfilePhoto"), verifyLocation, biodataController.BuyerBiodata);
 
 module.exports = router;
