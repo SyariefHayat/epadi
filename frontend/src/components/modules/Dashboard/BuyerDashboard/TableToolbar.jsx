@@ -32,7 +32,7 @@ const TableToolbar = ({
                         onChange={onSearchChange}
                     />
                 </div>
-                <a href="/admin/farmer/create">
+                <a href="/admin/buyer/create">
                     <Button 
                         className="h-8.5 flex items-center gap-2 cursor-pointer" 
                     >
