@@ -5,6 +5,7 @@ import Footer from '@/pages/landing/Footer'
 import FeaturesSection from './FeaturesSection'
 import HeroSection from '@/pages/landing/HeroSection'
 import DefaultLayout from '@/components/layouts/DefaultLayout'
+import RegionSummarySection from './RegionSummarySection'
 
 const Home = () => {
     return (
@@ -12,6 +13,7 @@ const Home = () => {
             <HeroSection />
             <WhySection />
             <FeaturesSection />
+            <RegionSummarySection />
             <Footer />
         </DefaultLayout>
     )

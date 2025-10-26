@@ -19,7 +19,7 @@ router.post("/sign-up", verifyLocation, authController.SignUpUser);
 router.post("/sign-in", authController.SignInUser);
 router.post("/sign-out", verifyToken, authController.SignOutUser);
 
-router.get("/admin/get/summary", verifyToken, isOperator, adminController.getDashboardSummary);
+router.get("/admin/get/summary", adminController.getDashboardSummary);
 router.get("/admin/get/farmer", verifyToken, isOperator, adminController.getAllFarmers);
 router.get("/admin/get/buyers", verifyToken, isOperator, adminController.getAllBuyers);
 
