@@ -27,7 +27,7 @@ const NavBar = () => {
                     <div className="flex items-center">
                         <div className="flex items-center justify-center gap-2 sm:gap-3">
                             <img 
-                                src="/logo1.png" 
+                                src="/logo.png" 
                                 alt="logo epadi" 
                                 className="transition-transform w-10 sm:w-12 lg:w-14" 
                             />

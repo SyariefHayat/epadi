@@ -18,6 +18,9 @@ const HeroSection = () => {
                         EPADI adalah ekosistem padi digital yang <br className="hidden md:block" /> memutus rantai distribusi
                         lama
                     </p>
+                    <p className="text-sm sm:text-base md:text-lg text-gray-500 font-medium">
+                        Pembiayaan Micro • Gudang Digital • Logistik Cerdas • Pasar Beras Digital
+                    </p>
                     <div className="flex justify-center lg:justify-start">
                         <a href="/signup">
                             <Button className="w-fit bg-green-600 hover:bg-green-700 py-4 sm:py-6 px-6 sm:px-8 text-sm sm:text-base md:text-lg cursor-pointer shadow-md">

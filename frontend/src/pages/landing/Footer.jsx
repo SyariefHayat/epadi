@@ -15,7 +15,7 @@ const Footer = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 items-center mb-12">
                     <div className="lg:col-span-2">
                         <div className="flex items-center space-x-3 mb-6 lg:-ml-2 ">
-                            <img src="/hero.png" alt="Logo EPADI" className="h-[80px] md:h-40 w-[75%] sm:w-auto" />
+                            <img src="/Group_10.png" alt="Logo EPADI" className="h-[80px] md:h-40 w-[75%] sm:w-auto" />
                         </div>
                     </div>
 
