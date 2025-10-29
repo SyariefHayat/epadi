@@ -107,6 +107,42 @@ const RegionSummarySection = () => {
         };
     }, [data, selectedProvince, selectedCity, selectedSubDistrict, selectedWard]);
 
+    const getLocationStatsForRole = (roleData) => {
+        // Hitung total user per level wilayah
+        const provinceUsers = {};
+        const cityUsers = {};
+        const subDistrictUsers = {};
+        const wardUsers = {};
+
+        roleData.forEach(user => {
+            if (user.province) {
+                provinceUsers[user.province] = (provinceUsers[user.province] || 0) + 1;
+            }
+            if (user.city) {
+                cityUsers[user.city] = (cityUsers[user.city] || 0) + 1;
+            }
+            if (user.subDistrict) {
+                subDistrictUsers[user.subDistrict] = (subDistrictUsers[user.subDistrict] || 0) + 1;
+            }
+            if (user.ward) {
+                wardUsers[user.ward] = (wardUsers[user.ward] || 0) + 1;
+            }
+        });
+
+        // Hitung total per level (jumlah unique wilayah)
+        return {
+            provinceCount: Object.keys(provinceUsers).length,
+            cityCount: Object.keys(cityUsers).length,
+            subDistrictCount: Object.keys(subDistrictUsers).length,
+            wardCount: Object.keys(wardUsers).length,
+            // Total user per level (bisa lebih dari total karena user bisa ada di multiple wilayah)
+            totalInProvinces: Object.values(provinceUsers).reduce((a, b) => a + b, 0),
+            totalInCities: Object.values(cityUsers).reduce((a, b) => a + b, 0),
+            totalInSubDistricts: Object.values(subDistrictUsers).reduce((a, b) => a + b, 0),
+            totalInWards: Object.values(wardUsers).reduce((a, b) => a + b, 0)
+        };
+    };
+
     const hasActiveFilter = selectedProvince || selectedCity || selectedSubDistrict || selectedWard;
 
     const resetFilters = () => {
@@ -120,6 +156,7 @@ const RegionSummarySection = () => {
         {
             title: 'Petani',
             count: filteredData.farmers.length,
+            roleData: filteredData.farmers,
             icon: Users,
             color: 'text-green-500',
             bgColor: 'bg-green-50',
@@ -128,6 +165,7 @@ const RegionSummarySection = () => {
         {
             title: 'Distributor',
             count: filteredData.distributors.length,
+            roleData: filteredData.distributors,
             icon: Truck,
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',
@@ -136,6 +174,7 @@ const RegionSummarySection = () => {
         {
             title: 'Investor',
             count: filteredData.investors.length,
+            roleData: filteredData.investors,
             icon: CircleDollarSign,
             color: 'text-purple-500',
             bgColor: 'bg-purple-50',
@@ -144,6 +183,7 @@ const RegionSummarySection = () => {
         {
             title: 'Pembeli',
             count: filteredData.buyers.length,
+            roleData: filteredData.buyers,
             icon: ShoppingBag,
             color: 'text-orange-500',
             bgColor: 'bg-orange-50',
@@ -321,6 +361,8 @@ const RegionSummarySection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {summaryCards.map((card, index) => {
                         const Icon = card.icon;
+                        const roleLocationStats = getLocationStatsForRole(card.roleData);
+                        
                         return (
                             <Card 
                                 key={index} 
@@ -337,13 +379,45 @@ const RegionSummarySection = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="space-y-1">
-                                        <p className="text-3xl md:text-4xl font-bold text-gray-900">
-                                            {card.count.toLocaleString('id-ID')}
-                                        </p>
-                                        <p className="text-xs md:text-sm text-gray-500">
-                                            {card.description}
-                                        </p>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="text-3xl md:text-4xl font-bold text-gray-900">
+                                                {card.count.toLocaleString('id-ID')}
+                                            </p>
+                                            <p className="text-xs md:text-sm text-gray-500">
+                                                {card.description}
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="pt-3 border-t border-gray-100">
+                                            <p className="text-xs text-gray-500 mb-2">Tersebar di:</p>
+                                            <div className="space-y-1.5 text-xs">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-500">{roleLocationStats.provinceCount} Provinsi</span>
+                                                    <span className="font-semibold text-gray-700">
+                                                        {roleLocationStats.totalInProvinces.toLocaleString('id-ID')} orang
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-500">{roleLocationStats.cityCount} Kab/Kota</span>
+                                                    <span className="font-semibold text-gray-700">
+                                                        {roleLocationStats.totalInCities.toLocaleString('id-ID')} orang
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-500">{roleLocationStats.subDistrictCount} Kecamatan</span>
+                                                    <span className="font-semibold text-gray-700">
+                                                        {roleLocationStats.totalInSubDistricts.toLocaleString('id-ID')} orang
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-500">{roleLocationStats.wardCount} Desa</span>
+                                                    <span className="font-semibold text-gray-700">
+                                                        {roleLocationStats.totalInWards.toLocaleString('id-ID')} orang
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
