@@ -55,51 +55,60 @@ const FarmerBiodata = async (req, res) => {
         };
 
         const emptyFields = Object.entries(requiredFields)
-            .filter(([key, value]) => value === undefined || value === null || value === "")
+            .filter(([_, value]) => value === undefined || value === null || value === "")
             .map(([key]) => key);
 
-        if (emptyFields.length > 0) return ERR(res, 400, `Field berikut wajib diisi: ${emptyFields.join(", ")}`);
+        if (emptyFields.length > 0)
+            return ERR(res, 400, `Field berikut wajib diisi: ${emptyFields.join(", ")}`);
 
-        if (!["Laki-laki", "Perempuan"].includes(gender)) return ERR(res, 400, "Jenis kelamin harus 'Laki-laki' atau 'Perempuan'");
+        if (!["Laki-laki", "Perempuan"].includes(gender))
+            return ERR(res, 400, "Jenis kelamin harus 'Laki-laki' atau 'Perempuan'");
 
-        if (landArea < 0) return ERR(res, 400, "Luas lahan tidak boleh negatif");
+        if (landArea < 0)
+            return ERR(res, 400, "Luas lahan tidak boleh negatif");
 
-        if (estimatedHarvest < 0) return ERR(res, 400, "Estimasi panen tidak boleh negatif");
+        if (estimatedHarvest < 0)
+            return ERR(res, 400, "Estimasi panen tidak boleh negatif");
 
         const birthDate = new Date(dateOfBirth);
-        if (isNaN(birthDate.getTime())) return ERR(res, 400, "Format tanggal lahir tidak valid");
+        if (isNaN(birthDate.getTime()))
+            return ERR(res, 400, "Format tanggal lahir tidak valid");
 
         const today = new Date();
         const age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (age < 17 || (age === 17 && monthDiff < 0)) return ERR(res, 400, "Umur minimal 17 tahun");
+        if (age < 17 || (age === 17 && monthDiff < 0))
+            return ERR(res, 400, "Umur minimal 17 tahun");
 
         const existingUser = await User.findById(createdBy);
-        if (!existingUser) return ERR(res, 404, "User tidak ditemukan");
+        if (!existingUser)
+            return ERR(res, 404, "User tidak ditemukan");
 
         const existingFarmer = await Farmer.findOne({ NIK });
-        if (existingFarmer) return ERR(res, 409, "Data biodata petani sudah ada untuk user ini");
+        if (existingFarmer)
+            return ERR(res, 409, "Data biodata petani sudah ada untuk user ini");
 
         if (farmerCardNumber) {
-            const existingCard = await Farmer.findOne({ 
-                farmerCardNumber: farmerCardNumber.trim() 
+            const existingCard = await Farmer.findOne({
+                farmerCardNumber: farmerCardNumber.trim()
             });
-            if (existingCard) {
+            if (existingCard)
                 return ERR(res, 409, "Nomor kartu tani sudah digunakan");
-            }
         }
 
-        const existingPhone = await Farmer.findOne({ phone: phone.trim() });
-        if (existingPhone) return ERR(res, 409, "Nomor HP sudah digunakan");
+        if (phone && phone.trim()) {
+            const existingPhone = await Farmer.findOne({ phone: phone.trim() });
+            if (existingPhone)
+                return ERR(res, 409, "Nomor HP sudah digunakan");
+        }
 
         const farmerData = {
-            fullName,
-            NIK,
+            fullName: fullName.trim(),
+            NIK: NIK.trim(),
             profilePicture: profileImage,
             dateOfBirth: birthDate,
             gender: gender.trim(),
-            phone: phone.trim(),
+            phone: phone ? phone.trim() : undefined,
             postalCode: postalCode.trim(),
             province: province.trim(),
             city: city.trim(),
@@ -114,14 +123,17 @@ const FarmerBiodata = async (req, res) => {
             landLocation: landLocation.trim(),
             plantingSeason: plantingSeason.trim(),
             farmerGroup: farmerGroup.trim(),
+            createdBy,
         };
 
-        if (farmerCardNumber && farmerCardNumber.trim()) farmerData.farmerCardNumber = farmerCardNumber.trim();
+        if (farmerCardNumber && farmerCardNumber.trim())
+            farmerData.farmerCardNumber = farmerCardNumber.trim();
 
         const newFarmer = new Farmer(farmerData);
         await newFarmer.save();
 
         return SUC(res, 201, "Biodata petani berhasil disimpan", newFarmer);
+
     } catch (error) {
         console.error("Error in FarmerBiodata:", error);
 
@@ -135,7 +147,8 @@ const FarmerBiodata = async (req, res) => {
             return ERR(res, 409, `${field} sudah digunakan`);
         }
 
-        if (error.name === 'CastError') return ERR(res, 400, "Invalid ID format");
+        if (error.name === 'CastError')
+            return ERR(res, 400, "Invalid ID format");
 
         return ERR(res, 500, "Internal Server Error");
     }
