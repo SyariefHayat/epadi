@@ -12,7 +12,7 @@ const AdminLoginForm = () => {
 
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
-    
+
     const navigate = useNavigate()
 
     const handleChange = (e) => {
@@ -26,10 +26,9 @@ const AdminLoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
-        
+
         try {
             await new Promise(resolve => setTimeout(resolve, 1500))
-            console.log('Login data:', formData)
             navigate("/dashboard/admin")
         } catch (error) {
             console.error("Error logging in:", error)

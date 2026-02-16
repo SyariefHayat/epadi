@@ -29,10 +29,6 @@ const CreateStore = () => {
         resolver: zodResolver(storeSchema),
     });
 
-    const onSubmit = (data) => {
-        console.log('Data Terkirim:', data);
-    };
-
     const handleButtonClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -41,18 +37,15 @@ const CreateStore = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            console.log('File dipilih:', file);
-        }
     };
 
     return (
         <DefaultLayout>
             <div className="w-full min-h-screen bg-yellow-100 p-3 sm:p-5">
                 <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
-                    <Button 
-                        variant="link" 
-                        className="cursor-pointer p-0 sm:p-2" 
+                    <Button
+                        variant="link"
+                        className="cursor-pointer p-0 sm:p-2"
                         onClick={() => navigate("/mart")}
                     >
                         <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
@@ -65,7 +58,7 @@ const CreateStore = () => {
                             {/* Left Column - Profile */}
                             <div className="w-full lg:w-1/2 space-y-5">
                                 <p className="mb-2 font-medium text-sm text-gray-600">Profil Toko</p>
-                                
+
                                 {/* Profile Picture Upload */}
                                 <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                                     <div className="flex-shrink-0">
@@ -75,10 +68,10 @@ const CreateStore = () => {
                                         <p className="text-xs text-gray-500 text-center sm:text-left">
                                             Ukuran optimal 300 x 300 px, maksimum 10MB. Format: JPG, JPEG, PNG.
                                         </p>
-                                        <Button 
-                                            variant="outline" 
-                                            type="button" 
-                                            className="w-full sm:w-fit cursor-pointer text-sm" 
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            className="w-full sm:w-fit cursor-pointer text-sm"
                                             onClick={handleButtonClick}
                                         >
                                             Upload Gambar
@@ -142,10 +135,10 @@ const CreateStore = () => {
                                 <div className="space-y-2">
                                     <p className="font-medium text-sm text-gray-600">Background Toko</p>
                                     <div className="w-full h-24 sm:h-32 flex items-center justify-center bg-gray-200 rounded-md">
-                                        <Button 
-                                            type="button" 
-                                            variant="outline" 
-                                            className="cursor-pointer text-sm" 
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="cursor-pointer text-sm"
                                             onClick={handleButtonClick}
                                         >
                                             Pilih Gambar
@@ -173,9 +166,9 @@ const CreateStore = () => {
                                 <div className="space-y-2">
                                     <p className="font-medium text-sm text-gray-600">Lokasi</p>
                                     <div className="w-full h-24 sm:h-32 bg-gray-200 rounded-md flex items-center justify-center">
-                                        <Button 
-                                            type="button" 
-                                            variant="outline" 
+                                        <Button
+                                            type="button"
+                                            variant="outline"
                                             className="cursor-pointer text-sm"
                                         >
                                             Pilih Lokasi
@@ -188,17 +181,17 @@ const CreateStore = () => {
                         {/* Action Buttons */}
                         <div className="w-full bg-white mt-4 sm:mt-5 p-4 sm:p-5 rounded-md">
                             <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
-                                <Button 
-                                    variant="outline" 
-                                    type="button" 
-                                    className="w-full sm:w-auto cursor-pointer order-2 sm:order-1" 
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    className="w-full sm:w-auto cursor-pointer order-2 sm:order-1"
                                     onClick={() => navigate("/mart")}
                                 >
                                     Batalkan
                                 </Button>
-                                <Button 
-                                    type="submit" 
-                                    className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black cursor-pointer order-1 sm:order-2" 
+                                <Button
+                                    type="submit"
+                                    className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black cursor-pointer order-1 sm:order-2"
                                     onClick={() => navigate("/seller")}
                                 >
                                     Buat Toko Sekarang

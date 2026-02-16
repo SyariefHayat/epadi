@@ -27,7 +27,6 @@ const Profile = () => {
 
     const handleSave = () => {
         setIsEditing(false)
-        console.log('Saving profile data:', profileData)
     }
 
     const menuItems = [
@@ -59,9 +58,9 @@ const Profile = () => {
                 <div className="flex items-center gap-6">
                     <div className="relative">
                         <div className="w-24 h-24 border-2 border-gray-300 bg-gray-50">
-                            <img 
-                                src="https://github.com/shadcn.png" 
-                                alt="Profile" 
+                            <img
+                                src="https://github.com/shadcn.png"
+                                alt="Profile"
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -185,11 +184,10 @@ const Profile = () => {
                                     <p className="font-medium text-gray-800">Order #{order.id}</p>
                                     <p className="text-sm text-gray-600">{new Date(order.date).toLocaleDateString('id-ID')}</p>
                                 </div>
-                                <span className={`px-2 py-1 text-xs border ${
-                                    order.status === 'Selesai' ? 'bg-green-50 text-green-700 border-green-200' :
-                                    order.status === 'Dalam Pengiriman' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                    'bg-yellow-50 text-yellow-700 border-yellow-200'
-                                }`}>
+                                <span className={`px-2 py-1 text-xs border ${order.status === 'Selesai' ? 'bg-green-50 text-green-700 border-green-200' :
+                                        order.status === 'Dalam Pengiriman' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                            'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                    }`}>
                                     {order.status}
                                 </span>
                             </div>
@@ -302,9 +300,9 @@ const Profile = () => {
                         <div className="bg-white border border-gray-300">
                             <div className="p-4 border-b border-gray-300 bg-gray-50">
                                 <div className="flex items-center gap-3">
-                                    <img 
-                                        src="https://github.com/shadcn.png" 
-                                        alt="Profile" 
+                                    <img
+                                        src="https://github.com/shadcn.png"
+                                        alt="Profile"
                                         className="w-12 h-12 border border-gray-300 object-cover"
                                     />
                                     <div>
@@ -313,7 +311,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <nav className="p-2">
                                 {menuItems.map((item) => {
                                     const Icon = item.icon
@@ -321,11 +319,10 @@ const Profile = () => {
                                         <button
                                             key={item.id}
                                             onClick={() => setActiveTab(item.id)}
-                                            className={`w-full flex items-center gap-3 px-3 py-2 text-left text-sm ${
-                                                activeTab === item.id
+                                            className={`w-full flex items-center gap-3 px-3 py-2 text-left text-sm ${activeTab === item.id
                                                     ? 'bg-gray-100 text-gray-800 border-l-2 border-gray-800'
                                                     : 'text-gray-600 hover:bg-gray-50'
-                                            }`}
+                                                }`}
                                         >
                                             <Icon className="w-4 h-4" />
                                             <span>{item.label}</span>
@@ -341,7 +338,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Main Content */}
                     <div className="flex-1">
                         {renderTabContent()}

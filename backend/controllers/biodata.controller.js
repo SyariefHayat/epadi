@@ -5,7 +5,7 @@ const { Buyer } = require("../models/buyer.model");
 
 const FarmerBiodata = async (req, res) => {
     const profileImgFile = req.file;
-    const profileImage = profileImgFile ? `${profileImgFile.filename}` : null;
+    const profileImage = profileImgFile ? profileImgFile.filename : null;
 
     const {
         fullName,
@@ -32,25 +32,16 @@ const FarmerBiodata = async (req, res) => {
     } = req.body;
 
     try {
+        // ========================
+        // REQUIRED FIELD CHECK
+        // ========================
         const requiredFields = {
             fullName,
             NIK,
-            dateOfBirth,
-            gender,
-            postalCode,
             province,
             city,
             subDistrict,
             ward,
-            address,
-            landArea,
-            riceVariety,
-            estimatedHarvest,
-            howLongBecomeFarmer,
-            landOwnership,
-            landLocation,
-            plantingSeason,
-            farmerGroup,
             createdBy
         };
 
@@ -58,77 +49,131 @@ const FarmerBiodata = async (req, res) => {
             .filter(([_, value]) => value === undefined || value === null || value === "")
             .map(([key]) => key);
 
-        if (emptyFields.length > 0)
+        if (emptyFields.length > 0) {
             return ERR(res, 400, `Field berikut wajib diisi: ${emptyFields.join(", ")}`);
+        }
 
-        if (!["Laki-laki", "Perempuan"].includes(gender))
+        // ========================
+        // VALIDASI GENDER
+        // ========================
+        if (gender && !["Laki-laki", "Perempuan"].includes(gender)) {
             return ERR(res, 400, "Jenis kelamin harus 'Laki-laki' atau 'Perempuan'");
+        }
 
-        if (landArea < 0)
+        // ========================
+        // VALIDASI ANGKA
+        // ========================
+        if (landArea !== undefined && Number(landArea) < 0) {
             return ERR(res, 400, "Luas lahan tidak boleh negatif");
+        }
 
-        if (estimatedHarvest < 0)
+        if (estimatedHarvest !== undefined && Number(estimatedHarvest) < 0) {
             return ERR(res, 400, "Estimasi panen tidak boleh negatif");
+        }
 
-        const birthDate = new Date(dateOfBirth);
-        if (isNaN(birthDate.getTime()))
-            return ERR(res, 400, "Format tanggal lahir tidak valid");
+        // ========================
+        // VALIDASI TANGGAL LAHIR
+        // ========================
+        let birthDate;
+        if (dateOfBirth) {
+            birthDate = new Date(dateOfBirth);
 
-        const today = new Date();
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (age < 17 || (age === 17 && monthDiff < 0))
-            return ERR(res, 400, "Umur minimal 17 tahun");
+            if (isNaN(birthDate.getTime())) {
+                return ERR(res, 400, "Format tanggal lahir tidak valid");
+            }
 
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if (age < 17) {
+                return ERR(res, 400, "Umur minimal 17 tahun");
+            }
+        }
+
+        // ========================
+        // CEK USER
+        // ========================
         const existingUser = await User.findById(createdBy);
-        if (!existingUser)
+        if (!existingUser) {
             return ERR(res, 404, "User tidak ditemukan");
+        }
 
+        // ========================
+        // CEK DUPLIKASI
+        // ========================
         const existingFarmer = await Farmer.findOne({ NIK });
-        if (existingFarmer)
+        if (existingFarmer) {
             return ERR(res, 409, "Data biodata petani sudah ada untuk user ini");
+        }
 
         if (farmerCardNumber) {
             const existingCard = await Farmer.findOne({
                 farmerCardNumber: farmerCardNumber.trim()
             });
-            if (existingCard)
+            if (existingCard) {
                 return ERR(res, 409, "Nomor kartu tani sudah digunakan");
+            }
         }
 
-        if (phone && phone.trim()) {
+        if (phone) {
             const existingPhone = await Farmer.findOne({ phone: phone.trim() });
-            if (existingPhone)
+            if (existingPhone) {
                 return ERR(res, 409, "Nomor HP sudah digunakan");
+            }
         }
 
+        // ========================
+        // HELPER FUNCTION
+        // ========================
+        const cleanString = (val) =>
+            val !== undefined && val !== null && val !== "" ? val.trim() : undefined;
+
+        const cleanNumber = (val) =>
+            val !== undefined && val !== null && val !== ""
+                ? parseFloat(val)
+                : undefined;
+
+        // ========================
+        // DATA OBJECT
+        // ========================
         const farmerData = {
             fullName: fullName.trim(),
             NIK: NIK.trim(),
             profilePicture: profileImage,
             dateOfBirth: birthDate,
-            gender: gender.trim(),
-            phone: phone ? phone.trim() : undefined,
-            postalCode: postalCode.trim(),
-            province: province.trim(),
-            city: city.trim(),
-            subDistrict: subDistrict.trim(),
-            ward: ward.trim(),
-            address: address.trim(),
-            landArea: parseFloat(landArea),
-            riceVariety: riceVariety.trim(),
-            estimatedHarvest: parseFloat(estimatedHarvest),
-            howLongBecomeFarmer: howLongBecomeFarmer.trim(),
-            landOwnership: landOwnership.trim(),
-            landLocation: landLocation.trim(),
-            plantingSeason: plantingSeason.trim(),
-            farmerGroup: farmerGroup.trim(),
+            gender: cleanString(gender),
+            phone: cleanString(phone),
+            postalCode: cleanString(postalCode),
+            province: cleanString(province),
+            city: cleanString(city),
+            subDistrict: cleanString(subDistrict),
+            ward: cleanString(ward),
+            address: cleanString(address),
+
+            landArea: cleanNumber(landArea),
+            riceVariety: cleanString(riceVariety),
+            estimatedHarvest: cleanNumber(estimatedHarvest),
+            howLongBecomeFarmer: cleanString(howLongBecomeFarmer),
+            landOwnership: cleanString(landOwnership),
+            landLocation: cleanString(landLocation),
+            plantingSeason: cleanString(plantingSeason),
+            farmerGroup: cleanString(farmerGroup),
+
             createdBy,
         };
 
-        if (farmerCardNumber && farmerCardNumber.trim())
+        if (farmerCardNumber && farmerCardNumber.trim()) {
             farmerData.farmerCardNumber = farmerCardNumber.trim();
+        }
 
+        // ========================
+        // SAVE
+        // ========================
         const newFarmer = new Farmer(farmerData);
         await newFarmer.save();
 
@@ -137,9 +182,11 @@ const FarmerBiodata = async (req, res) => {
     } catch (error) {
         console.error("Error in FarmerBiodata:", error);
 
-        if (error.name === 'ValidationError') {
-            const validationErrors = Object.values(error.errors).map(err => err.message);
-            return ERR(res, 400, `Validation Error: ${validationErrors.join(', ')}`);
+        if (error.name === "ValidationError") {
+            const validationErrors = Object.values(error.errors).map(
+                (err) => err.message
+            );
+            return ERR(res, 400, `Validation Error: ${validationErrors.join(", ")}`);
         }
 
         if (error.code === 11000) {
@@ -147,8 +194,9 @@ const FarmerBiodata = async (req, res) => {
             return ERR(res, 409, `${field} sudah digunakan`);
         }
 
-        if (error.name === 'CastError')
+        if (error.name === "CastError") {
             return ERR(res, 400, "Invalid ID format");
+        }
 
         return ERR(res, 500, "Internal Server Error");
     }
@@ -218,7 +266,7 @@ const BuyerBiodata = async (req, res) => {
             const today = new Date();
             const age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            
+
             if (age < 17 || (age === 17 && monthDiff < 0)) {
                 return ERR(res, 400, "Umur minimal 17 tahun");
             }

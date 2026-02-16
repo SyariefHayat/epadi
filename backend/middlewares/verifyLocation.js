@@ -4,7 +4,6 @@ const { ERR } = require("../utils/response");
 const verifyLocation = async (req, res, next) => {
   try {
     const { provinceCode, cityCode, subDistrictCode, wardCode } = req.body;
-    console.log(req.body);
 
     if (!provinceCode && !cityCode && !subDistrictCode && !wardCode)
       return ERR(res, 400, "Data wilayah tidak lengkap");
