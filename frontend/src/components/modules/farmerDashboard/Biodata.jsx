@@ -82,7 +82,7 @@ const FarmerBiodata = z.object({
     landLocation: z.string().min(1, "Lokasi lahan wajib diisi"),
     plantingSeason: z.string().min(1, "Musim tanam wajib dipilih"),
     farmerGroup: z.string().min(1, "Kelompok tani wajib diisi"),
-    farmerCardNumber: z.string().min(1, "Nomor kartu tani wajib diisi"),
+    farmerCardNumber: z.string().optional(),
 });
 
 
@@ -963,7 +963,7 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem className="md:col-span-2">
                                                 <FormLabel className="text-sm font-medium text-gray-700">
-                                                    Nomor Kartu Tani
+                                                    Nomor Kartu Tani (Opsional)
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
