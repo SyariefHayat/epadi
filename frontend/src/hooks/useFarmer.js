@@ -49,13 +49,13 @@ export const useFarmer = () => {
     useEffect(() => {
         const fetchProvinces = async () => {
             if (!currentUser) return;
-            
+
             try {
                 const token = await currentUser.getIdToken();
                 const response = await apiInstanceExpress.get('location/provinces', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.status === 200) {
                     setProvinces(response.data.data || []);
                 }
@@ -73,13 +73,13 @@ export const useFarmer = () => {
                 setCities([]);
                 return;
             }
-            
+
             try {
                 const token = await currentUser.getIdToken();
                 const response = await apiInstanceExpress.get(`location/cities?provinceId=${filterProvince}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.status === 200) {
                     setCities(response.data.data || []);
                 }
@@ -98,13 +98,13 @@ export const useFarmer = () => {
                 setSubDistricts([]);
                 return;
             }
-            
+
             try {
                 const token = await currentUser.getIdToken();
                 const response = await apiInstanceExpress.get(`location/sub-districts?cityId=${filterCity}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.status === 200) {
                     setSubDistricts(response.data.data || []);
                 }
@@ -123,13 +123,13 @@ export const useFarmer = () => {
                 setWards([]);
                 return;
             }
-            
+
             try {
                 const token = await currentUser.getIdToken();
                 const response = await apiInstanceExpress.get(`location/wards?subDistrictId=${filterSubDistrict}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.status === 200) {
                     setWards(response.data.data || []);
                 }
@@ -149,7 +149,7 @@ export const useFarmer = () => {
 
             try {
                 const token = await currentUser.getIdToken();
-                
+
                 const params = new URLSearchParams({
                     page: currentPage.toString(),
                     limit: '10'
@@ -169,24 +169,8 @@ export const useFarmer = () => {
                         Authorization: `Bearer ${token}`
                     },
                 });
-                
-                if (response.status === 200) {
-                    const farmers = response.data.data.data || [];
-                    
-                    const mappedFarmers = farmers.map(farmer => {
-                        const province = provinces.find(p => p.code === farmer.provinceCode);
-                        const city = cities.find(c => c.code === farmer.cityCode);
-                        const subDistrict = subDistricts.find(s => s.code === farmer.subDistrictCode);
-                        const ward = wards.find(w => w.code === farmer.ward);
-                        return {
-                            ...farmer,
-                            provinceName: province ? province.name : '-',
-                            cityName: city ? city.name : '-',
-                            subDistrictName: subDistrict ? subDistrict.name : '-',
-                            wardName: ward ? ward.name : '-',
-                        };
-                    });
 
+                if (response.status === 200) {
                     setAllFarmers(response.data.data.data || []);
                     setPagination(response.data.data.pagination);
                 }

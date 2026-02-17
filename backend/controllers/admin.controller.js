@@ -77,7 +77,7 @@ const { Buyer } = require("../models/buyer.model");
 //         const today = new Date();
 //         const age = today.getFullYear() - birthDate.getFullYear();
 //         const monthDiff = today.getMonth() - birthDate.getMonth();
-        
+
 //         if (age < 17 || (age === 17 && monthDiff < 0)) {
 //             return ERR(res, 400, "Umur minimal 17 tahun");
 //         }
@@ -164,7 +164,7 @@ const getFarmerBiodata = async (req, res) => {
         const { userId } = req.params;
 
         const farmer = await Farmer.findOne({ user: userId }).populate('user', 'fullName email NIK');
-        
+
         if (!farmer) {
             return ERR(res, 404, "Biodata petani tidak ditemukan");
         }
@@ -172,11 +172,11 @@ const getFarmerBiodata = async (req, res) => {
         return SUC(res, 200, "Biodata berhasil diambil", farmer);
     } catch (error) {
         console.error("Error in getFarmerBiodata:", error);
-        
+
         if (error.name === 'CastError') {
             return ERR(res, 400, "Invalid user ID format");
         }
-        
+
         return ERR(res, 500, "Internal Server Error");
     }
 };
@@ -190,11 +190,11 @@ const getDashboardSummary = async (req, res) => {
             User.find({ role: "buyer" }),
         ]);
 
-        return SUC(res, 200, { 
-            farmers, 
-            distributors, 
-            investors, 
-            buyers 
+        return SUC(res, 200, {
+            farmers,
+            distributors,
+            investors,
+            buyers
         }, "Success getting data");
     } catch (error) {
         console.error(error);
@@ -207,10 +207,26 @@ const getAllFarmers = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 6;
         const skip = (page - 1) * limit;
+        const { search, province, city, subDistrict, ward } = req.query;
 
-        const totalFarmers = await Farmer.countDocuments();
+        const filter = {};
 
-        const farmers = await Farmer.find()
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+            filter.$or = [
+                { NIK: { $regex: regex } },
+                { fullName: { $regex: regex } }
+            ];
+        }
+
+        if (province) filter.province = new RegExp(`^${province}$`, 'i');
+        if (city) filter.city = new RegExp(`^${city}$`, 'i');
+        if (subDistrict) filter.subDistrict = new RegExp(`^${subDistrict}$`, 'i');
+        if (ward) filter.ward = new RegExp(`^${ward}$`, 'i');
+
+        const totalFarmers = await Farmer.countDocuments(filter);
+
+        const farmers = await Farmer.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
