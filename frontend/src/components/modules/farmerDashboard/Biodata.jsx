@@ -42,15 +42,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const FarmerBiodata = z.object({
-    // REQUIRED
-    nik: z.string().regex(/^\d{16}$/, "NIK harus 16 digit angka"),
-    fullName: z.string().min(1, "Nama lengkap wajib diisi"),
-    province: z.string().min(1, "Provinsi wajib diisi"),
-    city: z.string().min(1, "Kota/Kabupaten wajib diisi"),
-    subDistrict: z.string().min(1, "Kecamatan wajib diisi"),
-    ward: z.string().min(1, "Kelurahan/Desa wajib diisi"),
-
-    // OPTIONAL
+    // OPTIONAL - hanya foto profil
     farmerProfilePhoto: z.any()
         .optional()
         .refine((file) => !file || file instanceof File, "File foto tidak valid")
@@ -60,28 +52,37 @@ const FarmerBiodata = z.object({
             "Format foto harus JPG/PNG/WebP"
         ),
 
-    dateOfBirth: z.date().optional(),
-    gender: z.enum(["Laki-laki", "Perempuan"]).optional(),
+    // REQUIRED - Data Personal
+    nik: z.string().regex(/^\d{16}$/, "NIK harus 16 digit angka"),
+    fullName: z.string().min(1, "Nama lengkap wajib diisi"),
+    dateOfBirth: z.date({ required_error: "Tanggal lahir wajib diisi" }),
+    gender: z.enum(["Laki-laki", "Perempuan"], { required_error: "Jenis kelamin wajib dipilih" }),
     phone: z.string()
-        .regex(/^[0-9]{10,15}$/, "Nomor HP harus 10-15 digit angka")
-        .optional(),
+        .min(1, "Nomor HP wajib diisi")
+        .regex(/^[0-9]{10,15}$/, "Nomor HP harus 10-15 digit angka"),
 
-    postalCode: z.string().optional(),
-    provinceCode: z.string().optional(),
-    cityCode: z.string().optional(),
-    subDistrictCode: z.string().optional(),
-    wardCode: z.string().optional(),
-    address: z.string().optional(),
+    // REQUIRED - Data Alamat
+    province: z.string().min(1, "Provinsi wajib diisi"),
+    provinceCode: z.string().min(1, "Provinsi wajib dipilih"),
+    city: z.string().min(1, "Kota/Kabupaten wajib diisi"),
+    cityCode: z.string().min(1, "Kota/Kabupaten wajib dipilih"),
+    subDistrict: z.string().min(1, "Kecamatan wajib diisi"),
+    subDistrictCode: z.string().min(1, "Kecamatan wajib dipilih"),
+    ward: z.string().min(1, "Kelurahan/Desa wajib diisi"),
+    wardCode: z.string().min(1, "Kelurahan/Desa wajib dipilih"),
+    postalCode: z.string().min(1, "Kode pos wajib diisi"),
+    address: z.string().min(1, "Alamat lengkap wajib diisi"),
 
-    landArea: z.coerce.number().min(0, "Luas lahan tidak boleh negatif").optional(),
-    riceVariety: z.string().optional(),
-    estimatedHarvest: z.coerce.number().min(0, "Estimasi panen tidak boleh negatif").optional(),
-    howLongBecomeFarmer: z.string().optional(),
-    landOwnership: z.string().optional(),
-    landLocation: z.string().optional(),
-    plantingSeason: z.string().optional(),
-    farmerGroup: z.string().optional(),
-    farmerCardNumber: z.string().optional(),
+    // REQUIRED - Data Pertanian
+    landArea: z.coerce.number({ required_error: "Luas lahan wajib diisi" }).min(1, "Luas lahan harus lebih dari 0"),
+    riceVariety: z.string().min(1, "Varietas padi wajib diisi"),
+    estimatedHarvest: z.coerce.number({ required_error: "Estimasi panen wajib diisi" }).min(1, "Estimasi panen harus lebih dari 0"),
+    howLongBecomeFarmer: z.string().min(1, "Lama menjadi petani wajib diisi"),
+    landOwnership: z.string().min(1, "Status kepemilikan lahan wajib dipilih"),
+    landLocation: z.string().min(1, "Lokasi lahan wajib diisi"),
+    plantingSeason: z.string().min(1, "Musim tanam wajib dipilih"),
+    farmerGroup: z.string().min(1, "Kelompok tani wajib diisi"),
+    farmerCardNumber: z.string().min(1, "Nomor kartu tani wajib diisi"),
 });
 
 
@@ -497,7 +498,7 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem className="md:col-span-2">
                                                 <FormLabel className="text-sm font-medium text-gray-700">
-                                                    Nomor HP (Opsional)
+                                                    Nomor HP
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -962,7 +963,7 @@ const Biodata = () => {
                                         render={({ field }) => (
                                             <FormItem className="md:col-span-2">
                                                 <FormLabel className="text-sm font-medium text-gray-700">
-                                                    Nomor Kartu Tani (Opsional)
+                                                    Nomor Kartu Tani
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
